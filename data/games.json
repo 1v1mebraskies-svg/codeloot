@@ -1429,11 +1429,11 @@
     {
       "id": 21,
       "created_at": "2026-05-21T22:14:19.115Z",
-      "name": "game name",
+      "name": "game name 2",
       "slug": "game-name",
-      "short_description": "show descr",
+      "short_description": "show descr2ew",
       "long_description": ";long descr",
-      "description": "show descr",
+      "description": "show descr2ew",
       "category": "general",
       "reward_label": "2x XP",
       "update_date": "may 20, 2026",
@@ -1448,15 +1448,16 @@
           "id": 156,
           "code": "code",
           "reward": "reward",
-          "status": "expired",
+          "status": "active",
           "created_at": "2026-05-21T22:14:19.115Z"
         }
       ],
-      "updated_at": "2026-05-21T22:14:19.115Z"
+      "updated_at": "2026-05-21T22:20:49.176Z",
+      "image": "game-name.png"
     }
   ],
   "metadata": {
     "version": "1.0",
-    "last_updated": "2026-05-21T22:20:32.275Z"
+    "last_updated": "2026-05-21T22:20:56.290Z"
   }
 }
