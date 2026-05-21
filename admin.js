@@ -91,40 +91,53 @@ async function loadGames() {
     console.log('[PRODUCTION] Current hostname:', window.location.hostname);
     console.log('[PRODUCTION] Current protocol:', window.location.protocol);
     console.log('[PRODUCTION] Current pathname:', window.location.pathname);
-    try {
-        const response = await fetch('/data/games.json', { cache: 'no-store' });
-        console.log('[PRODUCTION] fetch response status:', response.status, response.ok);
-        console.log('[PRODUCTION] fetch response content-type:', response.headers.get('content-type'));
-        
-        if (response.ok) {
-            const data = await response.json();
-            console.log('[PRODUCTION] games.json loaded successfully, games count:', data.games ? data.games.length : 0);
-            gamesData = data;
+    
+    // Try multiple possible paths for games.json
+    const possiblePaths = [
+        '/data/games.json',
+        './data/games.json',
+        '../data/games.json',
+        'https://raw.githubusercontent.com/1v1mebraskies-svg/CODELOOT/main/data/games.json'
+    ];
+    
+    for (const path of possiblePaths) {
+        console.log('[PRODUCTION] Trying path:', path);
+        try {
+            const response = await fetch(path, { cache: 'no-store' });
+            console.log('[PRODUCTION] fetch response status for', path, ':', response.status, response.ok);
+            console.log('[PRODUCTION] fetch response content-type:', response.headers.get('content-type'));
             
-            // Ensure all games have required fields
-            gamesData.games.forEach(function(game) {
-                if (!game.codes) game.codes = [];
-                if (!game.short_description && game.description) game.short_description = game.description;
-                if (!game.long_description) game.long_description = game.description || game.short_description || '';
-                if (!game.redeem_instructions) game.redeem_instructions = [];
-                // Ensure all codes have IDs
-                game.codes.forEach(function(code, idx) {
-                    if (!code.id) code.id = idx + 1;
+            if (response.ok && response.headers.get('content-type')?.includes('json')) {
+                const data = await response.json();
+                console.log('[PRODUCTION] games.json loaded successfully from', path, ', games count:', data.games ? data.games.length : 0);
+                gamesData = data;
+                
+                // Ensure all games have required fields
+                gamesData.games.forEach(function(game) {
+                    if (!game.codes) game.codes = [];
+                    if (!game.short_description && game.description) game.short_description = game.description;
+                    if (!game.long_description) game.long_description = game.description || game.short_description || '';
+                    if (!game.redeem_instructions) game.redeem_instructions = [];
+                    // Ensure all codes have IDs
+                    game.codes.forEach(function(code, idx) {
+                        if (!code.id) code.id = idx + 1;
+                    });
                 });
-            });
-            
-            console.log('[PRODUCTION] calling renderGamesTable with', gamesData.games.length, 'games');
-            renderGamesTable(gamesData.games);
-        } else {
-            console.error('[PRODUCTION] Failed to load games.json, status:', response.status);
-            gamesData = { games: [], metadata: { version: '1.0', last_updated: '' } };
-            renderGamesTable([]);
+                
+                console.log('[PRODUCTION] calling renderGamesTable with', gamesData.games.length, 'games');
+                renderGamesTable(gamesData.games);
+                return; // Success - exit the loop
+            }
+        } catch (e) {
+            console.error('[PRODUCTION] Error loading games.json from', path, ':', e);
+            continue; // Try next path
         }
-    } catch (e) {
-        console.error('[PRODUCTION] Error loading games.json:', e);
-        gamesData = { games: [], metadata: { version: '1.0', last_updated: '' } };
-        renderGamesTable([]);
     }
+    
+    // If all paths failed, use empty data
+    console.error('[PRODUCTION] All paths failed, using empty games data');
+    gamesData = { games: [], metadata: { version: '1.0', last_updated: '' } };
+    renderGamesTable([]);
 }
 
 function setSaveStatus(msg, isError) {
