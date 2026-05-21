@@ -17,7 +17,7 @@
       "destination": "/admin/login.html"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!api|admin|login|data|assets|games).*)",
       "destination": "/index.html"
     }
   ],
