@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeLoot Admin Login</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: var(--bg);
+        }
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+        }
+        .login-card {
+            background: var(--surface);
+            border-radius: var(--radius-card);
+            padding: 40px;
+            border: 1px solid var(--line);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .brand-mark {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: var(--blue);
+            color: white;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .login-header h1 {
+            margin: 0 0 8px;
+            font-size: 24px;
+        }
+        .login-header p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-card);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: var(--radius-card);
+            background: var(--blue);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: #3b82f6;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .error-message {
+            color: var(--danger);
+            font-size: 13px;
+            margin-top: 12px;
+            text-align: center;
+            min-height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <span class="brand-mark">CL</span>
+                <h1>Admin Login</h1>
+                <p>CodeLoot CMS Dashboard</p>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter admin password" required autofocus>
+                </div>
+                <button type="submit" class="btn" id="login-btn">Login</button>
+                <div class="error-message" id="error-message"></div>
+            </form>
+        </div>
+    </div>
+    <script>
+        const ADMIN_PASSWORD = 'AdminPass';
+        
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
+            const errorEl = document.getElementById('error-message');
+            const btn = document.getElementById('login-btn');
+            
+            btn.disabled = true;
+            errorEl.textContent = '';
+            
+            if (password === ADMIN_PASSWORD) {
+                sessionStorage.setItem('codeloot_admin_auth', 'true');
+                sessionStorage.setItem('codeloot_auth_time', Date.now().toString());
+                window.location.href = 'index.html';
+            } else {
+                errorEl.textContent = 'Incorrect password';
+                btn.disabled = false;
+                document.getElementById('password').value = '';
+                document.getElementById('password').focus();
+            }
+        });
+    </script>
+</body>
+</html>

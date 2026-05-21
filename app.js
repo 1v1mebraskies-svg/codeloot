@@ -1,209 +1,352 @@
 (function () {
-    const siteRoot = document.body.dataset.siteRoot || ".";
+    const D = window.CodeLootData;
+    const siteRoot = document.body.dataset.siteRoot || '.';
 
-    function gameUrl(fileName) {
-        return `${siteRoot}/games/${fileName}`;
+    function gameUrl(slug) {
+        return siteRoot + '/games/' + slug + '.html';
     }
 
-    function setupSearch() {
-        const searchForms = document.querySelectorAll("[data-site-search]");
-        
-        // Initialize all game cards with searchable data attributes
+    let gamesCatalog = [];
+
+    function renderCodeCard(code) {
+        const esc = D.escapeHtml;
+        return (
+            '<article class="code-card">' +
+            '<div><h3>' + esc(code.code) + '</h3><p>' + esc(code.reward) + '</p></div>' +
+            '<button class="copy-button" type="button" data-code="' + esc(code.code) + '">Copy</button>' +
+            '</article>'
+        );
+    }
+
+    function hydrateGamePage(game) {
+        const grid = document.querySelector('.code-grid');
+        if (!grid || !game) return;
+
+        const activeCodes = (game.codes || []).filter(function (c) {
+            return c.status === 'active';
+        });
+
+        grid.innerHTML = activeCodes.map(renderCodeCard).join('');
+
+        const statValue = document.querySelector('.game-stats .stat-card .stat-value');
+        if (statValue) {
+            statValue.textContent = String(activeCodes.length);
+        }
+
+        const bannerDesc = document.querySelector('.game-banner-copy p:last-of-type');
+        if (bannerDesc) {
+            bannerDesc.textContent = game.long_description || game.description || '';
+        }
+
+        const bannerImg = document.querySelector('.game-banner img');
+        if (bannerImg) {
+            bannerImg.src = D.gameImageSrc(game, siteRoot);
+        }
+
+        const noCodes = document.querySelector('.no-codes');
+        if (noCodes) {
+            noCodes.hidden = activeCodes.length > 0;
+        }
+
+        setupCopyButtons();
+    }
+
+    function syncCardFromGame(card, game) {
+        const count = D.activeCodeCount(game);
+        const siteRootPath = siteRoot === '.' ? '' : siteRoot;
+
+        card.href = siteRootPath + '/games/' + game.slug + '.html';
+        card.dataset.gameName = game.name;
+        card.dataset.gameSlug = game.slug;
+        card.dataset.searchSlug = game.slug.toLowerCase();
+        card.dataset.searchDescription = (game.description || '').toLowerCase();
+        card.dataset.searchKeywords = D.gameSearchText(game);
+
+        const metaSpans = card.querySelectorAll('.card-meta span, .featured-card-copy > span');
+        if (metaSpans.length) {
+            metaSpans[0].textContent = count + ' active';
+            if (count === 0 && metaSpans[1]) {
+                metaSpans[1].textContent = 'No code box yet';
+            }
+        }
+
+        const featuredSpan = card.querySelector('.featured-card-copy > span');
+        if (featuredSpan && card.classList.contains('featured-card')) {
+            featuredSpan.textContent = count + ' verified codes';
+        }
+
+        const desc = card.querySelector('.game-card-body p, .featured-card-copy p');
+        if (desc) {
+            desc.textContent = game.short_description || game.description || '';
+        }
+
+        const cardImg = card.querySelector('img');
+        if (cardImg) {
+            cardImg.src = D.gameImageSrc(game, siteRoot);
+        }
+
+        const title = card.querySelector('h3');
+        if (title) {
+            title.textContent = game.name;
+        }
+    }
+
+    function buildGameCard(game, featured) {
+        const siteRootPath = siteRoot === '.' ? '' : siteRoot;
+        const count = D.activeCodeCount(game);
+        const img = 'assets/img/' + D.gameImageFile(game);
+        const esc = D.escapeHtml;
+        const cardClass = featured ? 'featured-card card' : 'game-card card';
+
+        if (featured) {
+            return (
+                '<a class="' + cardClass + '" href="' + siteRootPath + '/games/' + esc(game.slug) + '.html" ' +
+                'data-game-card data-game-name="' + esc(game.name) + '" data-game-slug="' + esc(game.slug) + '">' +
+                '<img src="' + siteRootPath + '/' + img + '" onerror="this.src=\'' + siteRootPath + '/assets/img/code-loot-hero.png\'" alt="' + esc(game.name) + ' banner">' +
+                '<div class="featured-card-copy"><span>' + count + ' verified codes</span>' +
+                '<h3>' + esc(game.name) + '</h3><p>' + esc(game.description) + '</p></div></a>'
+            );
+        }
+
+        return (
+            '<a class="' + cardClass + '" href="' + siteRootPath + '/games/' + esc(game.slug) + '.html" ' +
+            'data-game-card data-game-name="' + esc(game.name) + '" data-game-slug="' + esc(game.slug) + '">' +
+            '<img src="' + siteRootPath + '/' + img + '" onerror="this.src=\'' + siteRootPath + '/assets/img/code-loot-hero.png\'" alt="' + esc(game.name) + ' banner">' +
+            '<div class="game-card-body"><div class="card-meta"><span>' + count + ' active</span><span>Verified</span></div>' +
+            '<h3>' + esc(game.name) + '</h3><p>' + esc(game.description) + '</p>' +
+            '<span class="text-link">' + (count > 0 ? 'View codes' : 'View status') + '</span></div></a>'
+        );
+    }
+
+    function gridForCategory(category) {
+        const sectionMap = {
+            anime: 'Anime Games',
+            pvp: 'PvP Games',
+            rng: 'RNG',
+            horror: 'Horror',
+        };
+        const label = sectionMap[category];
+        if (!label) return document.querySelector('.game-grid');
+
+        const sections = document.querySelectorAll('section.section, section.featured-games');
+        for (let i = 0; i < sections.length; i++) {
+            const section = sections[i];
+            const heading = section.querySelector('h2, .featured-heading h2');
+            const aria = section.getAttribute('aria-label') || '';
+            if ((heading && heading.textContent.indexOf(label) !== -1) || aria.indexOf(label) !== -1) {
+                return section.querySelector('.game-grid, .featured-grid');
+            }
+        }
+        return document.querySelector('.game-grid');
+    }
+
+    function syncHomepage(games) {
+        const activeGames = games.filter(function (g) {
+            return g.active !== false;
+        });
+        const slugsOnPage = new Set();
+
+        document.querySelectorAll('[data-game-card]').forEach(function (card) {
+            const slug = D.slugFromHref(card.getAttribute('href'));
+            if (!slug) return;
+            slugsOnPage.add(slug);
+            const game = D.findGameBySlug(activeGames, slug);
+            if (game) {
+                syncCardFromGame(card, game);
+            }
+        });
+
+        activeGames.forEach(function (game) {
+            if (slugsOnPage.has(game.slug)) return;
+
+            const grid = game.featured
+                ? document.querySelector('.featured-grid')
+                : gridForCategory(game.category);
+            if (!grid) return;
+
+            grid.insertAdjacentHTML('beforeend', buildGameCard(game, !!game.featured));
+            slugsOnPage.add(game.slug);
+        });
+    }
+
+    function setupSearch(games) {
+        const searchForms = document.querySelectorAll('[data-site-search]');
+        gamesCatalog = games || [];
+
         function initializeGameCards() {
-            const gameCards = document.querySelectorAll("[data-game-card]");
-            
-            gameCards.forEach(function (card) {
-                // Extract data to be searchable
-                const gameName = card.dataset.gameName || "";
-                
-                // Get title from h3
-                const titleEl = card.querySelector("h3");
-                const title = titleEl ? titleEl.textContent.trim() : "";
-                
-                // Get description from p tag
-                const descEl = card.querySelector("p");
-                const description = descEl ? descEl.textContent.trim() : "";
-                
-                // Get image alt text
-                const imgEl = card.querySelector("img");
-                const imgAlt = imgEl ? imgEl.alt : "";
-                
-                // Get metadata/rewards info
-                const metaEl = card.querySelector(".card-meta");
-                const meta = metaEl ? metaEl.textContent.trim() : "";
-                
-                // Get link text
-                const linkEl = card.querySelector(".text-link");
-                const linkText = linkEl ? linkEl.textContent.trim() : "";
-                
-                // Combine everything into searchable keywords
-                const allKeywords = `${gameName} ${title} ${description} ${imgAlt} ${meta} ${linkText}`.toLowerCase();
-                
-                // Store as data attributes
+            document.querySelectorAll('[data-game-card]').forEach(function (card) {
+                const gameName = card.dataset.gameName || '';
+                const slug = card.dataset.gameSlug || D.slugFromHref(card.getAttribute('href')) || '';
+                const titleEl = card.querySelector('h3');
+                const title = titleEl ? titleEl.textContent.trim() : '';
+                const descEl = card.querySelector('p');
+                const description = descEl ? descEl.textContent.trim() : '';
+                const imgEl = card.querySelector('img');
+                const imgAlt = imgEl ? imgEl.alt : '';
+                const metaEl = card.querySelector('.card-meta');
+                const meta = metaEl ? metaEl.textContent.trim() : '';
+                const linkEl = card.querySelector('.text-link');
+                const linkText = linkEl ? linkEl.textContent.trim() : '';
+                const game = D.findGameBySlug(gamesCatalog, slug);
+                const jsonText = game ? D.gameSearchText(game) : '';
+
+                const allKeywords = (gameName + ' ' + slug + ' ' + title + ' ' + description + ' ' + imgAlt + ' ' + meta + ' ' + linkText + ' ' + jsonText).toLowerCase();
+
                 card.dataset.searchTitle = title.toLowerCase();
                 card.dataset.searchDescription = description.toLowerCase();
                 card.dataset.searchKeywords = allKeywords;
             });
         }
 
-        /**
-         * Extract all searchable text from a game card
-         */
         function getSearchableText(card) {
-            const keywords = card.dataset.searchKeywords || "";
-            return keywords.toLowerCase();
+            return (card.dataset.searchKeywords || '').toLowerCase();
         }
 
-        /**
-         * Get all game cards on the page
-         */
         function getAllGameCards() {
-            return document.querySelectorAll("[data-game-card]");
+            return document.querySelectorAll('[data-game-card]');
         }
 
-        /**
-         * Get all game sections (Anime Games, PvP Games, etc.)
-         */
         function getAllGameSections() {
-            return document.querySelectorAll("section.section, section.featured-games");
+            return document.querySelectorAll('section.section, section.featured-games');
         }
 
-        /**
-         * Update visibility of sections based on visible cards within
-         */
         function updateSectionVisibility() {
-            const sections = getAllGameSections();
-            
-            sections.forEach(function (section) {
-                const cardsInSection = section.querySelectorAll("[data-game-card]");
+            getAllGameSections().forEach(function (section) {
+                const cardsInSection = section.querySelectorAll('[data-game-card]');
                 let hasVisibleCards = false;
-                
                 cardsInSection.forEach(function (card) {
-                    if (!card.classList.contains("is-hidden")) {
+                    if (!card.classList.contains('is-hidden')) {
                         hasVisibleCards = true;
                     }
                 });
-                
-                // Hide section if no visible cards
-                section.classList.toggle("is-hidden", !hasVisibleCards);
+                section.classList.toggle('is-hidden', !hasVisibleCards);
             });
         }
 
-        /**
-         * Update the datalist with current games
-         */
         function updateGameList() {
-            const gameList = document.querySelector("#game-list");
+            const gameList = document.querySelector('#game-list');
             if (!gameList) return;
-
-            gameList.innerHTML = "";
-
-            const gameNames = new Set();
-            getAllGameCards().forEach(function (card) {
-                const gameName = card.dataset.gameName;
-                if (gameName) {
-                    gameNames.add(gameName);
-                }
+            gameList.innerHTML = '';
+            const names = new Set();
+            gamesCatalog.forEach(function (game) {
+                if (game.active !== false) names.add(game.name);
             });
-
-            gameNames.forEach(function (name) {
-                const option = document.createElement("option");
+            getAllGameCards().forEach(function (card) {
+                if (card.dataset.gameName) names.add(card.dataset.gameName);
+            });
+            names.forEach(function (name) {
+                const option = document.createElement('option');
                 option.value = name;
                 gameList.appendChild(option);
             });
         }
 
-        /**
-         * Filter game cards based on search query
-         */
         function filterCards(query) {
             const gameCards = getAllGameCards();
             let visibleCount = 0;
 
+            if (gameCards.length === 0 && query && gamesCatalog.length) {
+                return filterCatalogOnly(query);
+            }
+
             gameCards.forEach(function (card) {
                 const searchableText = getSearchableText(card);
-                
-                // Show card if no query or query matches searchable text
                 const isVisible = !query || searchableText.includes(query);
-
-                card.classList.toggle("is-hidden", !isVisible);
-
-                if (isVisible) {
-                    visibleCount += 1;
-                }
+                card.classList.toggle('is-hidden', !isVisible);
+                if (isVisible) visibleCount += 1;
             });
-            
-            // Update section visibility
+
             updateSectionVisibility();
-            
             return visibleCount;
         }
 
-        /**
-         * Show or hide the empty state message
-         */
-        function updateEmptyState(query, visibleCount) {
-            const emptyState = document.querySelector("[data-search-empty]");
-            if (!emptyState) return;
+        function filterCatalogOnly(query) {
+            const matches = gamesCatalog.filter(function (game) {
+                return game.active !== false && D.gameSearchText(game).includes(query);
+            });
+            return matches.length;
+        }
+
+        function findFirstMatch(query) {
+            const cards = getAllGameCards();
             
-            // Show empty state only if there's a query and no results
+            // First try to find exact match by game name
+            for (let i = 0; i < cards.length; i++) {
+                const card = cards[i];
+                const gameName = (card.dataset.gameName || '').toLowerCase();
+                if (gameName === query) {
+                    return { href: card.href };
+                }
+            }
+            
+            // Then try to find partial match in visible cards
+            for (let i = 0; i < cards.length; i++) {
+                if (!cards[i].classList.contains('is-hidden')) {
+                    return { href: cards[i].href };
+                }
+            }
+            
+            // Fallback to games catalog
+            if (!query) return null;
+            const game = gamesCatalog.find(function (g) {
+                return g.active !== false && D.gameSearchText(g).includes(query);
+            });
+            return game ? { href: gameUrl(game.slug) } : null;
+        }
+
+        function updateEmptyState(query, visibleCount) {
+            const emptyState = document.querySelector('[data-search-empty]');
+            if (!emptyState) return;
             emptyState.hidden = visibleCount !== 0 || !query;
         }
 
-        // Initialize search on page load
         initializeGameCards();
         updateGameList();
 
-        // Setup search functionality for each search form
         searchForms.forEach(function (form) {
-            const input = form.querySelector("[data-game-search]");
+            const input = form.querySelector('[data-game-search]');
+            const button = form.querySelector('#search-button');
+            if (!input) return;
 
-            if (!input) {
-                return;
-            }
-
-            /**
-             * Handle search input - live filtering
-             */
-            input.addEventListener("input", function () {
+            input.addEventListener('input', function () {
                 const query = input.value.trim().toLowerCase();
                 const visibleCount = filterCards(query);
                 updateEmptyState(query, visibleCount);
             });
 
-            /**
-             * Handle form submission - navigate to first matching game
-             */
-            form.addEventListener("submit", function (event) {
-                event.preventDefault();
+            // Handle button click for search
+            if (button) {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const query = input.value.trim().toLowerCase();
+                    if (!query) return;
+                    const match = findFirstMatch(query);
+                    if (match && match.href) {
+                        window.location.href = match.href;
+                    } else {
+                        // If no match found, show alert
+                        alert('No game found matching: ' + input.value);
+                    }
+                });
+            }
 
-                const query = input.value.trim().toLowerCase();
-                if (!query) return;
-
-                const gameCards = getAllGameCards();
-                let foundCard = null;
-
-                for (let i = 0; i < gameCards.length; i++) {
-                    const card = gameCards[i];
-                    if (!card.classList.contains("is-hidden")) {
-                        foundCard = card;
-                        break;
+            // Handle Enter key in input
+            input.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    const query = input.value.trim().toLowerCase();
+                    if (!query) return;
+                    const match = findFirstMatch(query);
+                    if (match && match.href) {
+                        window.location.href = match.href;
+                    } else {
+                        alert('No game found matching: ' + input.value);
                     }
                 }
-
-                if (foundCard) {
-                    window.location.href = foundCard.href;
-                }
-            });
-
-            /**
-             * Clear search with Escape key
-             */
-            input.addEventListener("keydown", function (event) {
-                if (event.key === "Escape") {
-                    input.value = "";
-                    filterCards("");
-                    updateEmptyState("", -1);
+                if (event.key === 'Escape') {
+                    input.value = '';
+                    filterCards('');
+                    updateEmptyState('', -1);
                 }
             });
         });
@@ -211,16 +354,13 @@
 
     function fallbackCopy(text) {
         return new Promise(function (resolve) {
-            const helper = document.createElement("textarea");
-
+            const helper = document.createElement('textarea');
             helper.value = text;
-            helper.className = "clipboard-helper";
-
+            helper.className = 'clipboard-helper';
             document.body.appendChild(helper);
             helper.select();
-            document.execCommand("copy");
+            document.execCommand('copy');
             helper.remove();
-
             resolve();
         });
     }
@@ -231,25 +371,22 @@
                 return fallbackCopy(text);
             });
         }
-
         return fallbackCopy(text);
     }
 
     function setupCopyButtons() {
-        const copyButtons = document.querySelectorAll("[data-code]");
-
-        copyButtons.forEach(function (button) {
-            button.addEventListener("click", function () {
+        document.querySelectorAll('[data-code]').forEach(function (button) {
+            if (button.dataset.copyBound) return;
+            button.dataset.copyBound = '1';
+            button.addEventListener('click', function () {
                 const code = button.dataset.code;
                 const defaultText = button.dataset.defaultText || button.textContent;
-
                 copyWithFallback(code).then(function () {
-                    button.textContent = "Copied";
-                    button.classList.add("is-copied");
-
+                    button.textContent = 'Copied';
+                    button.classList.add('is-copied');
                     window.setTimeout(function () {
                         button.textContent = defaultText;
-                        button.classList.remove("is-copied");
+                        button.classList.remove('is-copied');
                     }, 1400);
                 });
             });
@@ -257,35 +394,54 @@
     }
 
     function setupContactForm() {
-        const contactForm = document.getElementById("contact-form");
+        const contactForm = document.getElementById('contact-form');
+        if (!contactForm) return;
 
-        if (!contactForm) {
-            return;
-        }
-
-        contactForm.addEventListener("submit", function (event) {
+        contactForm.addEventListener('submit', function (event) {
             event.preventDefault();
-
-            const name = contactForm.querySelector("#name").value.trim();
-            const email = contactForm.querySelector("#email").value.trim();
-            const subject = contactForm.querySelector("#subject").value.trim();
-            const message = contactForm.querySelector("#message").value.trim();
+            const name = contactForm.querySelector('#name').value.trim();
+            const email = contactForm.querySelector('#email').value.trim();
+            const subject = contactForm.querySelector('#subject').value.trim();
+            const message = contactForm.querySelector('#message').value.trim();
 
             if (!name || !email || !subject || !message) {
-                alert("Please fill in all fields.");
+                alert('Please fill in all fields.');
                 return;
             }
 
-            const mailtoLink = "mailto:hello@codeloot.codes?subject=" + 
-                encodeURIComponent("[CodeLoot Contact] " + subject) +
-                "&body=" + 
-                encodeURIComponent("Name: " + name + "\nEmail: " + email + "\n\nMessage:\n" + message);
+            const mailtoLink = 'mailto:hello@codeloot.codes?subject=' +
+                encodeURIComponent('[CodeLoot Contact] ' + subject) +
+                '&body=' +
+                encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\nMessage:\n' + message);
 
             window.location.href = mailtoLink;
         });
     }
 
-    setupSearch();
-    setupCopyButtons();
-    setupContactForm();
+    async function init() {
+        if (!D) {
+            setupCopyButtons();
+            setupContactForm();
+            return;
+        }
+
+        const data = await D.loadGamesData();
+        const games = data.games || [];
+        const slug = D.getSlugFromPath(window.location.pathname);
+
+        if (slug) {
+            const game = D.findGameBySlug(games, slug);
+            hydrateGamePage(game);
+        }
+
+        if (document.querySelector('[data-game-card]') || document.querySelector('.featured-grid')) {
+            syncHomepage(games);
+        }
+
+        setupSearch(games);
+        setupCopyButtons();
+        setupContactForm();
+    }
+
+    init();
 }());

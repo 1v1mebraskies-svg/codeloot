@@ -1,0 +1,1434 @@
+{
+  "games": [
+    {
+      "id": 1,
+      "name": "Anime Defenders",
+      "slug": "anime-defenders",
+      "description": "Gems, trait crystals, rerolls, and summon currency rewards.",
+      "category": "anime",
+      "featured": true,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-05-21T01:09:33.273Z",
+      "codes": [
+        {
+          "id": 1,
+          "code": "AURAUPDATE",
+          "reward": "Gems + Trait Crystals",
+          "status": "active",
+          "created_at": "2026-05-21T01:09:33.273Z"
+        },
+        {
+          "id": 2,
+          "code": "SEASONUPD",
+          "reward": "Gems",
+          "status": "active",
+          "created_at": "2026-05-21T01:09:33.273Z"
+        },
+        {
+          "id": 3,
+          "code": "FORTRESS",
+          "reward": "Gems",
+          "status": "active",
+          "created_at": "2026-05-21T01:09:33.273Z"
+        },
+        {
+          "id": 4,
+          "code": "UPDATE14",
+          "reward": "Gems + Rerolls",
+          "status": "active",
+          "created_at": "2026-05-21T01:09:33.273Z"
+        },
+        {
+          "id": 5,
+          "code": "MEGAUPD",
+          "reward": "Trait Crystals",
+          "status": "active",
+          "created_at": "2026-05-21T01:09:33.273Z"
+        },
+        {
+          "id": 6,
+          "code": "GUILDUPDATE",
+          "reward": "Gems",
+          "status": "active",
+          "created_at": "2026-05-21T01:09:33.273Z"
+        },
+        {
+          "id": 7,
+          "code": "SUMMER2026",
+          "reward": "Summon Currency",
+          "status": "active",
+          "created_at": "2026-05-21T01:09:33.273Z"
+        },
+        {
+          "id": 8,
+          "code": "DIVINE",
+          "reward": "Trait Rerolls",
+          "status": "active",
+          "created_at": "2026-05-21T01:09:33.273Z"
+        },
+        {
+          "id": 9,
+          "code": "RAIDSAREHERE",
+          "reward": "Gems",
+          "status": "active",
+          "created_at": "2026-05-21T01:09:33.273Z"
+        },
+        {
+          "id": 10,
+          "code": "THANKYOU400K",
+          "reward": "Gems",
+          "status": "active",
+          "created_at": "2026-05-21T01:09:33.273Z"
+        }
+      ],
+      "short_description": "Gems, trait crystals, rerolls, and summon currency rewards.",
+      "long_description": "Gems, trait crystals, rerolls, and summon currency rewards.",
+      "image": "anime-defenders-banner.png",
+      "reward_label": "",
+      "update_date": "",
+      "update_info": "",
+      "redeem_instructions": []
+    },
+    {
+      "id": 2,
+      "name": "Anime Vanguards",
+      "slug": "anime-vanguards",
+      "description": "Copy gems, trait crystals, rerolls, and summon currency before your next tower defense battle.",
+      "category": "general",
+      "featured": false,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [
+        {
+          "id": 11,
+          "code": "VAUNGUARD",
+          "reward": "Gems + Trait Crystals",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 12,
+          "code": "SEASON2",
+          "reward": "Gems",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 13,
+          "code": "UPDATE1",
+          "reward": "Gems",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 14,
+          "code": "MEGA2",
+          "reward": "Gems + Rerolls",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 15,
+          "code": "TRAITBOOST",
+          "reward": "Trait Crystals",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 16,
+          "code": "GUILD2",
+          "reward": "Gems",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 17,
+          "code": "SUMMER2026",
+          "reward": "Summon Currency",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 18,
+          "code": "DIVINE2",
+          "reward": "Trait Rerolls",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 19,
+          "code": "RAIDS2",
+          "reward": "Gems",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 20,
+          "code": "THANKS500K",
+          "reward": "Gems",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        }
+      ],
+      "short_description": "Copy gems, trait crystals, rerolls, and summon currency before your next tower defense battle.",
+      "long_description": "Copy gems, trait crystals, rerolls, and summon currency before your next tower defense battle.",
+      "image": "anime-vanguards.png",
+      "redeem_instructions": []
+    },
+    {
+      "id": 3,
+      "name": "Anime Warriors 3",
+      "slug": "anime-warriors",
+      "description": "Current code status for Arc I: Warriors, verified carefully before any rewards are published.",
+      "category": "general",
+      "featured": false,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [],
+      "short_description": "Current code status for Arc I: Warriors, verified carefully before any rewards are published.",
+      "long_description": "Current code status for Arc I: Warriors, verified carefully before any rewards are published.",
+      "image": "anime-warriors-banner.png",
+      "redeem_instructions": []
+    },
+    {
+      "id": 4,
+      "name": "Arsenal",
+      "slug": "arsenal",
+      "description": "Copy rewards before your next match. Classic FPS shooter with announcer packs, skins, battlebucks, and kill effects.",
+      "category": "general",
+      "featured": false,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [
+        {
+          "id": 21,
+          "code": "xonae",
+          "reward": "Announcer voice",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 22,
+          "code": "goodnight",
+          "reward": "Teleport effect",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 23,
+          "code": "fate",
+          "reward": "Teleport effect",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        }
+      ],
+      "short_description": "Copy rewards before your next match. Classic FPS shooter with announcer packs, skins, battlebucks, and kill effects.",
+      "long_description": "Copy rewards before your next match. Classic FPS shooter with announcer packs, skins, battlebucks, and kill effects.",
+      "image": "arsenal.png",
+      "redeem_instructions": []
+    },
+    {
+      "id": 5,
+      "name": "Basketball Legends",
+      "slug": "basketball-legends",
+      "description": "Fast paced Roblox basketball game with quick 5v5 and pickup gameplay. Copy rewards before your next match.",
+      "category": "general",
+      "featured": false,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [
+        {
+          "id": 24,
+          "code": "SORRY",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 25,
+          "code": "DRIBBLES",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 26,
+          "code": "530KLIKES",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 27,
+          "code": "520KLIKES",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 28,
+          "code": "510KLIKES",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 29,
+          "code": "500KLIKES",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 30,
+          "code": "BLOSSOMS",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 31,
+          "code": "MOBILE",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        }
+      ],
+      "short_description": "Fast paced Roblox basketball game with quick 5v5 and pickup gameplay. Copy rewards before your next match.",
+      "long_description": "Fast paced Roblox basketball game with quick 5v5 and pickup gameplay. Copy rewards before your next match.",
+      "image": "basketball-legends.png",
+      "redeem_instructions": []
+    },
+    {
+      "id": 6,
+      "name": "Blade Ball",
+      "slug": "blade-ball",
+      "description": "Free spins, coins, rewards, wins, and skills for intense arena matches.",
+      "category": "anime",
+      "featured": true,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [
+        {
+          "id": 32,
+          "code": "SUMMERWHEEL",
+          "reward": "Free Spin",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 33,
+          "code": "DRAGONS",
+          "reward": "Coins",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 34,
+          "code": "SHARKATTACK",
+          "reward": "Free Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 35,
+          "code": "ENERGYBOOST",
+          "reward": "Coins",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 36,
+          "code": "UPDATEHYPE",
+          "reward": "Free Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 37,
+          "code": "FREEWINS",
+          "reward": "Wins",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 38,
+          "code": "BLADES2026",
+          "reward": "Spin",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 39,
+          "code": "THANKYOU",
+          "reward": "Coins",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 40,
+          "code": "NEWSKILLS",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 41,
+          "code": "RANKEDMODE",
+          "reward": "Free Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        }
+      ],
+      "short_description": "Free spins, coins, rewards, wins, and skills for intense arena matches.",
+      "long_description": "Free spins, coins, rewards, wins, and skills for intense arena matches.",
+      "image": "blade-ball.png",
+      "redeem_instructions": []
+    },
+    {
+      "id": 7,
+      "name": "Blox Fruits",
+      "slug": "blox-fruits",
+      "description": "XP boosts, stat resets, titles, and grind-ready rewards.",
+      "category": "anime",
+      "featured": true,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [
+        {
+          "id": 42,
+          "code": "EASTEREXP",
+          "reward": "x2 EXP for 20 minutes",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 43,
+          "code": "SUB2GAMERROBOT_RESET1",
+          "reward": "Free stat reset",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 44,
+          "code": "Lightningabuse",
+          "reward": "x2 EXP for 20 minutes",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 45,
+          "code": "Axiore",
+          "reward": "x2 EXP for 20 minutes",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 46,
+          "code": "Bignews",
+          "reward": "Free in-game title",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 47,
+          "code": "Enyu_is_Pro",
+          "reward": "x2 EXP for 20 minutes",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 48,
+          "code": "KITT_RESET",
+          "reward": "Free stat refund",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 49,
+          "code": "SUB2GAMERROBOT_EXP1",
+          "reward": "x2 EXP for 30 minutes",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 50,
+          "code": "Sub2CaptainMaui",
+          "reward": "x2 EXP for 20 minutes",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 51,
+          "code": "TantaiGaming",
+          "reward": "x2 EXP for 15 minutes",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        }
+      ],
+      "short_description": "XP boosts, stat resets, titles, and grind-ready rewards.",
+      "long_description": "XP boosts, stat resets, titles, and grind-ready rewards.",
+      "image": "blox-fruits-banner.png",
+      "redeem_instructions": []
+    },
+    {
+      "id": 8,
+      "name": "Blue Lock Rivals",
+      "slug": "blue-lock-rivals",
+      "description": "Lucky Style and Lucky Flow spin codes for the competitive Roblox soccer experience.",
+      "category": "general",
+      "featured": false,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [
+        {
+          "id": 52,
+          "code": "KUNIGAMIW",
+          "reward": "5 Lucky Spins",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 53,
+          "code": "WILDCARD",
+          "reward": "5 Lucky Spins and 5 Lucky Flow Spins",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 54,
+          "code": "THEJOKER",
+          "reward": "5 Lucky Flow Spins",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        }
+      ],
+      "short_description": "Lucky Style and Lucky Flow spin codes for the competitive Roblox soccer experience.",
+      "long_description": "Lucky Style and Lucky Flow spin codes for the competitive Roblox soccer experience.",
+      "image": "blue-lock-rivals-banner.png",
+      "redeem_instructions": []
+    },
+    {
+      "id": 9,
+      "name": "Dead Rails",
+      "slug": "dead-rails",
+      "description": "Copy rewards before your next survival run. Zombie survival train adventure game with survival boosts, cash rewards, and event items.",
+      "category": "general",
+      "featured": false,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [
+        {
+          "id": 55,
+          "code": "APOCALYPSE",
+          "reward": "Cash rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 56,
+          "code": "SURVIVE",
+          "reward": "Boost items",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 57,
+          "code": "DEADRAILS",
+          "reward": "Starter rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        }
+      ],
+      "short_description": "Copy rewards before your next survival run. Zombie survival train adventure game with survival boosts, cash rewards, and event items.",
+      "long_description": "Copy rewards before your next survival run. Zombie survival train adventure game with survival boosts, cash rewards, and event items.",
+      "image": "dead-rails.png",
+      "redeem_instructions": []
+    },
+    {
+      "id": 10,
+      "name": "Fruit Battlegrounds",
+      "slug": "fruit-battlegrounds",
+      "description": "Copy gems, stat resets, rewards, boosts, and random rewards before your next PvP battle.",
+      "category": "general",
+      "featured": false,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [
+        {
+          "id": 58,
+          "code": "OMGUPDATE2026",
+          "reward": "Free Gems",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 59,
+          "code": "AWAKENINGS",
+          "reward": "Stat Reset",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 60,
+          "code": "FRUITPOWER",
+          "reward": "Gems",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 61,
+          "code": "NEWBOSSES",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 62,
+          "code": "UPDATEHYPE",
+          "reward": "Free Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 63,
+          "code": "THANKSFORPLAYING",
+          "reward": "Gems",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 64,
+          "code": "FREEFRUIT",
+          "reward": "Random Reward",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 65,
+          "code": "BATTLEPASS",
+          "reward": "Boost",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 66,
+          "code": "600KLIKES",
+          "reward": "Gems",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 67,
+          "code": "SORRY4SHUTDOWN",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        }
+      ],
+      "short_description": "Copy gems, stat resets, rewards, boosts, and random rewards before your next PvP battle.",
+      "long_description": "Copy gems, stat resets, rewards, boosts, and random rewards before your next PvP battle.",
+      "image": "fruit-battlegrounds.png",
+      "redeem_instructions": []
+    },
+    {
+      "id": 11,
+      "name": "Grow A Garden",
+      "slug": "grow-a-garden",
+      "description": "Copy seeds, coins, boosts, and exclusive plants before your next harvest.",
+      "category": "general",
+      "featured": false,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [
+        {
+          "id": 68,
+          "code": "HARVEST",
+          "reward": "Free Seeds",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 69,
+          "code": "GROWTH",
+          "reward": "Growth Boost",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 70,
+          "code": "PLANT2026",
+          "reward": "Exclusive Plant",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 71,
+          "code": "COINS",
+          "reward": "Free Coins",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 72,
+          "code": "RARESEED",
+          "reward": "Rare Seed",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 73,
+          "code": "BOOST",
+          "reward": "2x Growth",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 74,
+          "code": "LEGENDARY",
+          "reward": "Legendary Plant",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 75,
+          "code": "MYTHICAL",
+          "reward": "Mythical Seed",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 76,
+          "code": "EPIC",
+          "reward": "Epic Plant",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 77,
+          "code": "THANKYOU",
+          "reward": "Seeds + Coins",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        }
+      ],
+      "short_description": "Copy seeds, coins, boosts, and exclusive plants before your next harvest.",
+      "long_description": "Copy seeds, coins, boosts, and exclusive plants before your next harvest.",
+      "image": "grow-a-garden.png",
+      "redeem_instructions": []
+    },
+    {
+      "id": 12,
+      "name": "King Legacy",
+      "slug": "king-legacy",
+      "description": "2x EXP, gems, stat resets, cash, and keys for your adventure.",
+      "category": "anime",
+      "featured": true,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [
+        {
+          "id": 78,
+          "code": "<3LEEPUNG",
+          "reward": "2x EXP",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 79,
+          "code": "WELCOMETOKINGLEGACY",
+          "reward": "2x EXP",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 80,
+          "code": "SKGames",
+          "reward": "2x EXP",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 81,
+          "code": "DragonColorRefund",
+          "reward": "50 Gems",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 82,
+          "code": "RainbowDragon",
+          "reward": "100 Gems",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 83,
+          "code": "FREESTATSRESET",
+          "reward": "Stat Reset",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 84,
+          "code": "2MFAV",
+          "reward": "Stat Reset",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 85,
+          "code": "Peodiz",
+          "reward": "100,000 Cash",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 86,
+          "code": "DinoxLive",
+          "reward": "100,000 Cash",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 87,
+          "code": "FIXEDDROPBOOST",
+          "reward": "Fortune Tales",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 88,
+          "code": "FIXEDBUG1003",
+          "reward": "Gold Keys",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 89,
+          "code": "Serpent10",
+          "reward": "10 Gems",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 90,
+          "code": "FreePterSpin",
+          "reward": "Copper Keys",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 91,
+          "code": "EchoOfNine",
+          "reward": "Gold Key",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        }
+      ],
+      "short_description": "2x EXP, gems, stat resets, cash, and keys for your adventure.",
+      "long_description": "2x EXP, gems, stat resets, cash, and keys for your adventure.",
+      "image": "king-legacy-banner.png",
+      "redeem_instructions": []
+    },
+    {
+      "id": 13,
+      "name": "Massacre",
+      "slug": "massacre",
+      "description": "Copy rewards before your next asymmetrical survival battle. Survivors hide and fight back while killers hunt everyone down.",
+      "category": "general",
+      "featured": false,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [
+        {
+          "id": 92,
+          "code": "14may",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 93,
+          "code": "darthvaderrr",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 94,
+          "code": "iwascrazyonce",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 95,
+          "code": "trading",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 96,
+          "code": "13myayy",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 97,
+          "code": "bugspmo",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 98,
+          "code": "12millionurr",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 99,
+          "code": "thankyurr",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 100,
+          "code": "tradingsoon",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 101,
+          "code": "11mil",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 102,
+          "code": "hitman",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 103,
+          "code": "zombiesagain",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 104,
+          "code": "10mil",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 105,
+          "code": "ghost",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 106,
+          "code": "12kmembers",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 107,
+          "code": "100kfavourites",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 108,
+          "code": "mobilelayout",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 109,
+          "code": "9mil",
+          "reward": "Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        }
+      ],
+      "short_description": "Copy rewards before your next asymmetrical survival battle. Survivors hide and fight back while killers hunt everyone down.",
+      "long_description": "Copy rewards before your next asymmetrical survival battle. Survivors hide and fight back while killers hunt everyone down.",
+      "image": "massacre.png",
+      "redeem_instructions": []
+    },
+    {
+      "id": 14,
+      "name": "Murder Mystery 2",
+      "slug": "murder-mystery-2",
+      "description": "Solve the mystery and survive each round. Innocents hide, sheriffs protect, murderers eliminate everyone.",
+      "category": "general",
+      "featured": false,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [],
+      "short_description": "Solve the mystery and survive each round. Innocents hide, sheriffs protect, murderers eliminate everyone.",
+      "long_description": "Solve the mystery and survive each round. Innocents hide, sheriffs protect, murderers eliminate everyone.",
+      "image": "murder-mystery-2.png",
+      "redeem_instructions": []
+    },
+    {
+      "id": 15,
+      "name": "Pet Simulator 99",
+      "slug": "pet-simulator-99",
+      "description": "Copy coins, gems, boosts, and exclusive pets before your next collection run.",
+      "category": "general",
+      "featured": false,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [
+        {
+          "id": 110,
+          "code": "COINBOOST",
+          "reward": "2x Coins",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 111,
+          "code": "GEMRUSH",
+          "reward": "Free Gems",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 112,
+          "code": "PET2026",
+          "reward": "Exclusive Pet",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 113,
+          "code": "LUCKY99",
+          "reward": "Luck Boost",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 114,
+          "code": "UPDATE",
+          "reward": "Free Coins",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 115,
+          "code": "SHINY",
+          "reward": "Shiny Pet",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 116,
+          "code": "RARE",
+          "reward": "Rare Pet",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 117,
+          "code": "LEGENDARY",
+          "reward": "Legendary Pet",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 118,
+          "code": "MYTHICAL",
+          "reward": "Mythical Pet",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 119,
+          "code": "THANKYOU",
+          "reward": "Coins + Gems",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        }
+      ],
+      "short_description": "Copy coins, gems, boosts, and exclusive pets before your next collection run.",
+      "long_description": "Copy coins, gems, boosts, and exclusive pets before your next collection run.",
+      "image": "pet-simulator-99.png",
+      "redeem_instructions": []
+    },
+    {
+      "id": 16,
+      "name": "Rivals",
+      "slug": "rivals",
+      "description": "Copy rewards before your next competitive match. Fast-paced shooter with weapon unlocks, ranked rewards, and PvP combat bonuses.",
+      "category": "general",
+      "featured": false,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [
+        {
+          "id": 120,
+          "code": "COMMUNITY15",
+          "reward": "Free wraps and keys",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 121,
+          "code": "BONUS",
+          "reward": "Free keys",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 122,
+          "code": "RELEASE",
+          "reward": "Starter rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        }
+      ],
+      "short_description": "Copy rewards before your next competitive match. Fast-paced shooter with weapon unlocks, ranked rewards, and PvP combat bonuses.",
+      "long_description": "Copy rewards before your next competitive match. Fast-paced shooter with weapon unlocks, ranked rewards, and PvP combat bonuses.",
+      "image": "rivals.png",
+      "redeem_instructions": []
+    },
+    {
+      "id": 17,
+      "name": "Sol's RNG",
+      "slug": "sols-rng",
+      "description": "Copy auras, rerolls, luck boosts, and exclusive items before your next roll.",
+      "category": "general",
+      "featured": false,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [
+        {
+          "id": 123,
+          "code": "LUCKYROLL",
+          "reward": "Luck Boost + Reroll",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 124,
+          "code": "AURAUPDATE",
+          "reward": "Exclusive Aura",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 125,
+          "code": "ROLL2026",
+          "reward": "Free Rerolls",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 126,
+          "code": "LUCKBOOST",
+          "reward": "2x Luck",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 127,
+          "code": "EXCLUSIVE",
+          "reward": "Rare Item",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 128,
+          "code": "SHINY",
+          "reward": "Shiny Chance",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 129,
+          "code": "JACKPOT",
+          "reward": "Luck Boost",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 130,
+          "code": "LEGENDARY",
+          "reward": "Reroll Token",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 131,
+          "code": "MYTHICAL",
+          "reward": "Free Rerolls",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 132,
+          "code": "THANKYOU",
+          "reward": "Luck Boost",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        }
+      ],
+      "short_description": "Copy auras, rerolls, luck boosts, and exclusive items before your next roll.",
+      "long_description": "Copy auras, rerolls, luck boosts, and exclusive items before your next roll.",
+      "image": "sols-rng.png",
+      "redeem_instructions": []
+    },
+    {
+      "id": 18,
+      "name": "Type Soul",
+      "slug": "type-soul",
+      "description": "Soul Tickets, Rerolls, Clan Rerolls, and Weapon Rerolls for Bleach-inspired combat.",
+      "category": "anime",
+      "featured": true,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [
+        {
+          "id": 133,
+          "code": "sorryforthat",
+          "reward": "Soul Tickets",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 134,
+          "code": "newworld2",
+          "reward": "Rerolls",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 135,
+          "code": "shutdownsrry",
+          "reward": "Clan Rerolls",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 136,
+          "code": "fixedoldbugs",
+          "reward": "Weapon Rerolls",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 137,
+          "code": "contentcoming",
+          "reward": "Soul Tickets",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 138,
+          "code": "500mvisits",
+          "reward": "Free Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 139,
+          "code": "tyforfollowing",
+          "reward": "Rerolls",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 140,
+          "code": "balancepatch",
+          "reward": "Locked Shikai Rerolls",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 141,
+          "code": "newcodefr",
+          "reward": "Free Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 142,
+          "code": "apologycode",
+          "reward": "Soul Tickets",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        }
+      ],
+      "short_description": "Soul Tickets, Rerolls, Clan Rerolls, and Weapon Rerolls for Bleach-inspired combat.",
+      "long_description": "Soul Tickets, Rerolls, Clan Rerolls, and Weapon Rerolls for Bleach-inspired combat.",
+      "image": "type-soul.png",
+      "redeem_instructions": []
+    },
+    {
+      "id": 19,
+      "name": "Untitled Boxing Game",
+      "slug": "untitled-boxing-game",
+      "description": "Spins, Crates, Cash, and Free Rewards for ranked boxing fights.",
+      "category": "anime",
+      "featured": true,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [
+        {
+          "id": 143,
+          "code": "bigcode2026",
+          "reward": "Spins",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 144,
+          "code": "freecrates",
+          "reward": "Crate",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 145,
+          "code": "shutdowns",
+          "reward": "Spins",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 146,
+          "code": "ubgforever",
+          "reward": "Cash",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 147,
+          "code": "newchamp",
+          "reward": "Spins",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 148,
+          "code": "boxingupdate",
+          "reward": "Cash + Spins",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 149,
+          "code": "sorryfordelay",
+          "reward": "Spins",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 150,
+          "code": "fastservers",
+          "reward": "Cash",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 151,
+          "code": "worldchamp",
+          "reward": "Free Rewards",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 152,
+          "code": "500klikes",
+          "reward": "Spins",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        }
+      ],
+      "short_description": "Spins, Crates, Cash, and Free Rewards for ranked boxing fights.",
+      "long_description": "Spins, Crates, Cash, and Free Rewards for ranked boxing fights.",
+      "image": "untitled-boxing-game.png",
+      "redeem_instructions": []
+    },
+    {
+      "id": 20,
+      "name": "Volleyball Legends",
+      "slug": "volleyball-legends",
+      "description": "Copy rewards before your next match. Anime volleyball simulator with spins, boosts, and ability rerolls inspired by Haikyuu gameplay.",
+      "category": "general",
+      "featured": false,
+      "active": true,
+      "created_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "codes": [
+        {
+          "id": 153,
+          "code": "UPDATE",
+          "reward": "Free spins",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 154,
+          "code": "MATCHUP",
+          "reward": "Yen boost",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        },
+        {
+          "id": 155,
+          "code": "SERVE",
+          "reward": "Ability rerolls",
+          "status": "active",
+          "created_at": "2026-01-01T00:00:00Z"
+        }
+      ],
+      "short_description": "Copy rewards before your next match. Anime volleyball simulator with spins, boosts, and ability rerolls inspired by Haikyuu gameplay.",
+      "long_description": "Copy rewards before your next match. Anime volleyball simulator with spins, boosts, and ability rerolls inspired by Haikyuu gameplay.",
+      "image": "volleyball-legends.png",
+      "redeem_instructions": []
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "last_updated": "2026-05-21T01:12:11.674651Z"
+  }
+}
