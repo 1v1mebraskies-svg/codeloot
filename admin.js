@@ -938,6 +938,46 @@ async function initAdmin() {
         updateCmsBanner(null);
         // Don't alert - let the fallback in loadGames handle it
     }
+    
+    // HARDCODED RENDER TEST - verify renderer works
+    console.log('=== HARDCODED RENDER TEST ===');
+    const testData = [
+        {
+            id: "test",
+            name: "TEST GAME",
+            slug: "test",
+            category: "Action",
+            codes: [{id: 1, code: "TEST", reward: "Test", status: "active"}],
+            active: true,
+            featured: true
+        }
+    ];
+    console.log('Rendering hardcoded test data:', testData);
+    renderGamesTable(testData);
+    
+    // DIRECT FETCH FROM /data/games.json
+    console.log('=== DIRECT FETCH TEST ===');
+    try {
+        const directResponse = await fetch('/data/games.json', { cache: 'no-store' });
+        console.log('Direct fetch status:', directResponse.status);
+        if (directResponse.ok) {
+            const directData = await directResponse.json();
+            console.log('Direct fetch data:', directData);
+            console.log('Direct fetch games:', directData.games);
+            console.log('Direct fetch games length:', directData.games ? directData.games.length : 0);
+            
+            // Render the direct data
+            if (directData.games && directData.games.length > 0) {
+                console.log('Rendering direct fetch data with', directData.games.length, 'games');
+                gamesData = directData;
+                renderGamesTable(directData.games);
+            }
+        } else {
+            console.error('Direct fetch failed with status:', directResponse.status);
+        }
+    } catch (e) {
+        console.error('Direct fetch error:', e);
+    }
 
     // Start polling for remote changes if CMS is connected
     if (cmsConnected) {
