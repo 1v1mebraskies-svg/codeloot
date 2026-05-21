@@ -134,7 +134,7 @@
             if (password === ADMIN_PASSWORD) {
                 sessionStorage.setItem('codeloot_admin_auth', 'true');
                 sessionStorage.setItem('codeloot_auth_time', Date.now().toString());
-                window.location.href = 'index.html';
+                window.location.href = 'admin-index.html';
             } else {
                 errorEl.textContent = 'Incorrect password';
                 btn.disabled = false;

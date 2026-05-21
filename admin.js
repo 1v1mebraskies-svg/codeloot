@@ -1,4 +1,10 @@
 // CodeLoot Admin — publishes to real site files via Vercel API routes
+// VERSION: 2026-05-21-10:04-DEBUG
+
+console.log('=== ADMIN.JS LOADED ===');
+console.log('window.location.href:', window.location.href);
+console.log('document.currentScript:', document.currentScript);
+console.log('import.meta:', typeof import.meta !== 'undefined' ? import.meta : 'not available');
 
 const D = window.CodeLootData;
 const CMS = window.CodeLootCMS;
@@ -8,6 +14,15 @@ let gamesData = null;
 let pendingImageFile = null;
 let editorCodes = [];
 let cmsConnected = false;
+
+// Autosync state
+let currentVersion = null;
+let autosaveTimer = null;
+let pollTimer = null;
+let isAutosaving = false;
+let hasUnsavedChanges = false;
+const AUTOSAVE_DELAY = 3000; // 3 seconds of inactivity before autosave
+const POLL_INTERVAL = 10000; // Check for remote changes every 10 seconds
 
 function checkAuth() {
     const auth = sessionStorage.getItem('codeloot_admin_auth');
@@ -48,7 +63,9 @@ function updateCmsBanner(base) {
         el.style.cssText =
             'margin-bottom:16px;padding:12px 16px;border-radius:8px;font-size:14px;line-height:1.5;';
         const main = document.querySelector('.admin-main');
-        main.insertBefore(el, main.firstChild.nextSibling);
+        if (main) {
+            main.insertBefore(el, main.firstChild.nextSibling);
+        }
     }
 
     if (base) {
@@ -57,24 +74,27 @@ function updateCmsBanner(base) {
         el.style.border = '1px solid rgba(46, 160, 67, 0.4)';
         el.style.color = 'var(--text)';
         el.innerHTML =
-            '<strong>CMS connected</strong> — Save &amp; Publish writes real files to your project:<br>' +
-            '<code>data/games.json</code>, <code>index.html</code>, <code>games/*.html</code>, <code>assets/img/*</code><br>' +
+            '<strong>✓ Live Autosync Active</strong> — Changes save instantly to GitHub (shared data source)<br>' +
+            '<code>data/games.json</code> — Admin &amp; public site use same data<br>' +
             '<span style="color:var(--muted)">Server: ' + base + ' · ' +
-            '<a href="' + base + '/index.html" target="_blank" rel="noopener">View site</a></span>';
-        document.getElementById('save-game-btn').disabled = false;
-        document.getElementById('add-game-btn').disabled = false;
+            '<a href="' + base + '/index.html" target="_blank" rel="noopener">View live site</a></span>';
+        const saveBtn = document.getElementById('save-game-btn');
+        const addBtn = document.getElementById('add-game-btn');
+        if (saveBtn) saveBtn.disabled = false;
+        if (addBtn) addBtn.disabled = false;
     } else {
         cmsConnected = false;
         el.style.background = 'rgba(255, 193, 7, 0.12)';
         el.style.border = '1px solid rgba(255, 193, 7, 0.4)';
         el.style.color = 'var(--text)';
         el.innerHTML =
-            '<strong>CMS offline — Read-only mode</strong> — Games loaded from <code>data/games.json</code>.<br>' +
-            'To save changes, run <code>python3 server.py</code> then refresh.<br>' +
-            '<span style="color:var(--muted)">Current data source: local file · ' +
-            '<a href="' + CMS.defaultCmsUrl + '/admin/index.html" target="_blank" rel="noopener">Connect to CMS</a></span>';
-        document.getElementById('save-game-btn').disabled = true;
-        document.getElementById('add-game-btn').disabled = true;
+            '<strong>⚠ CMS Connection Issue</strong> — Cannot connect to GitHub API<br>' +
+            'Changes will be saved to localStorage as backup.<br>' +
+            '<span style="color:var(--muted)">Check GITHUB_TOKEN in Vercel settings</span>';
+        const saveBtn = document.getElementById('save-game-btn');
+        const addBtn = document.getElementById('add-game-btn');
+        if (saveBtn) saveBtn.disabled = false;
+        if (addBtn) addBtn.disabled = false;
     }
 }
 
@@ -83,39 +103,81 @@ async function loadGames() {
     
     console.log('loadGames() called, cmsConnected:', cmsConnected);
     
-    // Try to load from CMS API if connected
-    if (cmsConnected) {
-        try {
+    // Primary: Try to load from CMS API (GitHub API - shared data source)
+    try {
+        const base = CMS.getApiBase();
+        console.log('CMS API base:', base);
+        if (base) {
+            console.log('Attempting to load from CMS API at:', base + '/api/games');
             const res = await CMS.cmsFetch('/api/games', { cache: 'no-store' });
-            console.log('CMS API response status:', res.status);
+            console.log('CMS API response status:', res.status, 'ok:', res.ok);
             if (res.ok) {
                 gamesData = await res.json();
+                console.log('Raw API response:', JSON.stringify(gamesData, null, 2).substring(0, 500));
+                console.log('gamesData.games exists?', !!gamesData.games, 'type:', typeof gamesData.games);
+                console.log('gamesData.games is array?', Array.isArray(gamesData.games));
+                console.log('gamesData.games length:', gamesData.games ? gamesData.games.length : 'N/A');
+                // Track version for conflict detection
+                currentVersion = gamesData._version || null;
+                // Remove internal fields
+                delete gamesData._version;
+                delete gamesData._timestamp;
                 loadedFromCms = true;
-                console.log('Loaded games from CMS API, count:', gamesData.games ? gamesData.games.length : 0);
+                console.log('✓ Loaded games from GitHub API (shared data source), count:', gamesData.games ? gamesData.games.length : 0, 'version:', currentVersion);
             } else {
-                console.warn('CMS API returned non-OK status:', res.status);
+                console.warn('CMS API returned non-OK status:', res.status, 'trying fallback...');
+                const errorText = await res.text().catch(() => '');
+                console.warn('Error response body:', errorText);
+            }
+        } else {
+            console.warn('CMS API base not available, trying fallback...');
+        }
+    } catch (e) {
+        console.warn('CMS fetch failed, falling back:', e.message);
+        console.error('Full error:', e);
+    }
+    
+    // Fallback 1: Try to load from data/games.json directly (bypass CMS API)
+    if (!loadedFromCms) {
+        try {
+            console.log('Attempting to load from data/games.json directly...');
+            const res = await fetch('/data/games.json', { cache: 'no-store' });
+            if (res.ok) {
+                gamesData = await res.json();
+                currentVersion = null;
+                console.log('✓ Loaded games from data/games.json (direct), count:', gamesData.games ? gamesData.games.length : 0);
+                loadedFromCms = true;
+                setSyncStatus('Loaded from data file - CMS API unavailable', 'warning');
+            } else {
+                console.warn('data/games.json fetch failed with status:', res.status);
             }
         } catch (e) {
-            console.warn('CMS fetch failed, falling back to local file:', e.message);
+            console.warn('data/games.json fetch failed:', e.message);
         }
     }
     
-    // Fallback: load directly from data/games.json
+    // Fallback 2: Try to load from localStorage (backup)
     if (!loadedFromCms) {
-        console.log('Attempting to load from local file: ../data/games.json');
         try {
-            const res = await fetch('../data/games.json', { cache: 'no-store' });
-            console.log('Local file fetch response status:', res.status);
-            if (res.ok) {
-                gamesData = await res.json();
-                console.log('Loaded games from local file (data/games.json), count:', gamesData.games ? gamesData.games.length : 0);
-            } else {
-                throw new Error('Could not load games from local file, status: ' + res.status);
+            const localData = localStorage.getItem('codeloot_games_data');
+            if (localData) {
+                gamesData = JSON.parse(localData);
+                currentVersion = null;
+                console.log('⚠ Loaded games from localStorage (backup), count:', gamesData.games ? gamesData.games.length : 0);
+                loadedFromCms = true;
+                setSyncStatus('Using local backup - CMS connection issue', 'warning');
             }
         } catch (e) {
-            console.error('Failed to load games from local file:', e.message);
-            gamesData = { games: [], metadata: { version: '1.0', last_updated: '' } };
+            console.warn('localStorage load failed:', e.message);
         }
+    }
+    
+    // Final fallback: Empty data structure
+    if (!loadedFromCms) {
+        console.error('❌ All load attempts failed, using empty data structure');
+        gamesData = { games: [], metadata: { version: '1.0', last_updated: '' } };
+        currentVersion = null;
+        setSyncStatus('Failed to load games - check CMS connection', 'error');
     }
     
     if (!gamesData.metadata) {
@@ -133,6 +195,7 @@ async function loadGames() {
         });
     });
     console.log('Total games loaded after normalization:', gamesData.games.length);
+    console.log('Calling renderGamesTable with', gamesData.games.length, 'games');
     renderGamesTable(gamesData.games);
 }
 
@@ -141,6 +204,47 @@ function setSaveStatus(msg, isError) {
     el.hidden = !msg;
     el.textContent = msg || '';
     el.classList.toggle('error', !!isError);
+}
+
+function setSyncStatus(msg, type) {
+    let el = document.getElementById('sync-status');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'sync-status';
+        el.style.cssText = 'font-size:12px;color:var(--muted);margin-top:8px;';
+        const header = document.querySelector('.admin-header');
+        if (header) header.appendChild(el);
+    }
+    if (msg) {
+        el.textContent = msg;
+        el.style.color = type === 'error' ? 'var(--danger)' : 
+                        type === 'success' ? 'var(--mint)' : 
+                        type === 'warning' ? 'var(--warning)' : 'var(--muted)';
+    } else {
+        el.textContent = '';
+    }
+}
+
+function markUnsavedChanges() {
+    hasUnsavedChanges = true;
+    updateSyncIndicator();
+}
+
+function clearUnsavedChanges() {
+    hasUnsavedChanges = false;
+    updateSyncIndicator();
+}
+
+function updateSyncIndicator() {
+    let indicator = document.getElementById('unsaved-indicator');
+    if (!indicator) {
+        indicator = document.createElement('span');
+        indicator.id = 'unsaved-indicator';
+        indicator.style.cssText = 'display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--warning);margin-left:8px;';
+        const title = document.querySelector('.admin-header h1');
+        if (title) title.appendChild(indicator);
+    }
+    indicator.style.display = hasUnsavedChanges ? 'inline-block' : 'none';
 }
 
 async function uploadImage(slug, file) {
@@ -157,25 +261,143 @@ async function uploadImage(slug, file) {
     return data;
 }
 
-async function saveGames() {
+async function saveGames(skipVersionCheck = false) {
     gamesData.metadata.last_updated = new Date().toISOString();
-    const res = await CMS.cmsFetch('/api/games', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(gamesData, null, 2),
-    });
-    const result = await res.json().catch(function () {
-        return {};
-    });
-    if (!res.ok || result.success === false) {
-        throw new Error(result.error || 'Save failed');
+    
+    // Always save to localStorage as backup
+    try {
+        localStorage.setItem('codeloot_games_data', JSON.stringify(gamesData));
+        console.log('Saved to localStorage as backup');
+    } catch (e) {
+        console.warn('Failed to save to localStorage:', e.message);
     }
-    if (result.success) {
-        D.clearGamesCache();
-        // Reload gamesData from CMS to ensure sync
-        await loadGames();
+    
+    // Try to save to CMS API if connected
+    if (cmsConnected) {
+        const headers = { 'Content-Type': 'application/json' };
+        // Include version for conflict detection unless skipping
+        if (!skipVersionCheck && currentVersion) {
+            headers['X-If-Version'] = currentVersion;
+        }
+        
+        const res = await CMS.cmsFetch('/api/games', {
+            method: 'PUT',
+            headers: headers,
+            body: JSON.stringify(gamesData, null, 2),
+        });
+        const result = await res.json().catch(function () {
+            return {};
+        });
+        
+        if (res.status === 409) {
+            // Conflict detected
+            throw new ConflictError(result.message, result.currentData);
+        }
+        
+        if (!res.ok || result.success === false) {
+            throw new Error(result.error || 'Save failed');
+        }
+        if (result.success) {
+            // Update current version after successful save
+            currentVersion = result.version;
+            D.clearGamesCache();
+            clearUnsavedChanges();
+            // Reload gamesData from CMS to ensure sync
+            await loadGames();
+        }
+        return result;
+    } else {
+        // If CMS not connected, return success with localStorage-only flag
+        console.warn('CMS not connected, saved to localStorage only');
+        clearUnsavedChanges();
+        return { success: true, localStorageOnly: true, message: 'Saved to localStorage (CMS offline)' };
     }
-    return result;
+}
+
+// Custom error for conflicts
+class ConflictError extends Error {
+    constructor(message, currentData) {
+        super(message);
+        this.name = 'ConflictError';
+        this.currentData = currentData;
+    }
+}
+
+// Autosave with debouncing
+function triggerAutosave() {
+    if (autosaveTimer) {
+        clearTimeout(autosaveTimer);
+    }
+    
+    setSyncStatus('Autosaving in 3s...', 'warning');
+    
+    autosaveTimer = setTimeout(async function() {
+        if (!hasUnsavedChanges || isAutosaving) {
+            setSyncStatus('');
+            return;
+        }
+        
+        isAutosaving = true;
+        setSyncStatus('Autosaving...', 'warning');
+        
+        try {
+            await saveGames();
+            setSyncStatus('Autosaved successfully', 'success');
+            setTimeout(() => setSyncStatus(''), 2000);
+        } catch (err) {
+            console.error('Autosave failed:', err);
+            if (err instanceof ConflictError) {
+                setSyncStatus('Conflict detected - please refresh', 'error');
+            } else {
+                setSyncStatus('Autosave failed - ' + err.message, 'error');
+            }
+        } finally {
+            isAutosaving = false;
+        }
+    }, AUTOSAVE_DELAY);
+}
+
+// Poll for remote changes
+async function pollForRemoteChanges() {
+    if (!cmsConnected || !currentVersion) {
+        return;
+    }
+    
+    try {
+        const res = await CMS.cmsFetch('/api/sync-status');
+        const data = await res.json();
+        
+        if (data.success && data.version && data.version !== currentVersion) {
+            // Remote changes detected
+            if (!hasUnsavedChanges) {
+                // No local changes, safe to reload
+                console.log('Remote changes detected, reloading...');
+                setSyncStatus('Syncing changes...', 'warning');
+                await loadGames();
+                setSyncStatus('Synced', 'success');
+                setTimeout(() => setSyncStatus(''), 2000);
+            } else {
+                // Local unsaved changes exist, warn user
+                setSyncStatus('Remote changes available - save or discard local changes', 'warning');
+            }
+        }
+    } catch (err) {
+        console.warn('Poll for changes failed:', err.message);
+    }
+}
+
+function startPolling() {
+    if (pollTimer) {
+        clearInterval(pollTimer);
+    }
+    pollTimer = setInterval(pollForRemoteChanges, POLL_INTERVAL);
+}
+
+function stopPolling() {
+    if (pollTimer) {
+        clearInterval(pollTimer);
+        pollTimer = null;
+    }
 }
 
 function applyGameImage(game, uploadedFilename) {
@@ -213,7 +435,24 @@ function formatPublishedFiles(result, game) {
 }
 
 function renderGamesTable(games) {
+    console.log('renderGamesTable called with games:', games);
+    console.log('games is array?', Array.isArray(games));
+    console.log('games length:', games ? games.length : 'N/A');
+    
     const tbody = document.getElementById('games-table-body');
+    console.log('tbody element:', tbody);
+    
+    if (!tbody) {
+        console.error('games-table-body element not found!');
+        return;
+    }
+    
+    if (!games || !Array.isArray(games) || games.length === 0) {
+        console.warn('No games to render, showing empty table');
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);">No games found</td></tr>';
+        return;
+    }
+    
     const esc = D.escapeHtml;
 
     tbody.innerHTML = games.map(function (game) {
@@ -235,6 +474,8 @@ function renderGamesTable(games) {
             '</td></tr>'
         );
     }).join('');
+    
+    console.log('Table rendered with', games.length, 'games');
 }
 
 function parseRedeemLines(text) {
@@ -249,8 +490,9 @@ function formatRedeemLines(lines) {
 
 function imagePreviewUrl(game) {
     if (!game || !game.slug) return '';
-    const base = CMS.getApiBase() || '';
-    return base + '/assets/img/' + D.gameImageFile(game);
+    // Use GitHub raw URL for images (shared data source)
+    const githubRawUrl = 'https://raw.githubusercontent.com/1v1mebraskies-svg/CODELOOT/main/assets/img/';
+    return githubRawUrl + D.gameImageFile(game);
 }
 
 function renderCodeRows() {
@@ -388,11 +630,7 @@ function readFormGame() {
 
 async function handleSave(e) {
     e.preventDefault();
-    if (!cmsConnected) {
-        alert('Start the CMS server first:\n\npython3 server.py\n\nThen open:\nhttp://127.0.0.1:3000/admin/index.html');
-        return;
-    }
-
+    
     const id = document.getElementById('game-id').value;
     // Require sensitive password for editing existing games
     if (id && !confirmSensitiveAction('overwrite this game')) {
@@ -402,7 +640,7 @@ async function handleSave(e) {
 
     const btn = document.getElementById('save-game-btn');
     btn.disabled = true;
-    setSaveStatus('Publishing to site files...', false);
+    setSaveStatus('Saving...', false);
 
     try {
         const formGame = readFormGame();
@@ -432,6 +670,8 @@ async function handleSave(e) {
             gamesData.games.push(game);
         }
 
+        setSaveStatus('Publishing...', false);
+        
         const result = await publishGame(game, pendingImageFile);
         pendingImageFile = null;
 
@@ -441,18 +681,52 @@ async function handleSave(e) {
 
         const base = CMS.getApiBase();
         const fileList = formatPublishedFiles(result, game);
-        alert(
-            'Published to disk!\n\n' +
-            'Updated files:\n  · ' + fileList + '\n\n' +
-            'Live page: ' + base + '/games/' + game.slug + '.html\n' +
-            'Homepage: ' + base + '/index.html'
-        );
+        
+        let message = 'Published successfully!\n\n';
+        if (result.localStorageOnly) {
+            message += '⚠️ CMS is offline - saved to localStorage only.\n';
+            message += 'Changes will sync when CMS reconnects.\n\n';
+        } else {
+            message += '✓ Saved to GitHub (shared data source)\n';
+            message += '✓ Live site updated instantly\n\n';
+        }
+        message += 'Updated files:\n  · ' + fileList + '\n\n';
+        if (cmsConnected) {
+            message += 'Admin and public site now use the same data.';
+        }
+        alert(message);
     } catch (err) {
         console.error(err);
         setSaveStatus(err.message || 'Save failed', true);
-        alert('Publish failed: ' + (err.message || 'Save failed'));
+        
+        if (err instanceof ConflictError) {
+            // Show conflict resolution dialog
+            const shouldOverwrite = confirm(
+                'Conflict detected: The data was modified by another user.\n\n' +
+                'Click OK to overwrite their changes with your changes.\n' +
+                'Click Cancel to refresh and see their changes.'
+            );
+            if (shouldOverwrite) {
+                // Force save without version check
+                try {
+                    const result = await saveGames(true);
+                    document.getElementById('game-modal').classList.remove('active');
+                    renderGamesTable(gamesData.games);
+                    setSaveStatus('');
+                    alert('Published successfully (overwrote remote changes)');
+                } catch (retryErr) {
+                    alert('Failed to overwrite: ' + retryErr.message);
+                }
+            } else {
+                // Refresh to get latest data
+                await loadGames();
+                alert('Data refreshed. Please try again.');
+            }
+        } else {
+            alert('Publish failed: ' + (err.message || 'Save failed'));
+        }
     } finally {
-        btn.disabled = !cmsConnected;
+        btn.disabled = false;
     }
 }
 
@@ -499,6 +773,8 @@ document.getElementById('codes-editor-list').addEventListener('input', function 
     const field = e.target.getAttribute('data-field');
     if (!editorCodes[i] || !field) return;
     editorCodes[i][field] = e.target.value;
+    markUnsavedChanges();
+    triggerAutosave();
 });
 
 document.getElementById('codes-editor-list').addEventListener('click', function (e) {
@@ -516,6 +792,8 @@ document.getElementById('codes-editor-list').addEventListener('click', function 
 document.getElementById('add-code-row-btn').addEventListener('click', function () {
     editorCodes.push({ code: '', reward: '', status: 'active' });
     renderCodeRows();
+    markUnsavedChanges();
+    triggerAutosave();
 });
 
 document.getElementById('add-game-btn').addEventListener('click', function () {
@@ -524,40 +802,64 @@ document.getElementById('add-game-btn').addEventListener('click', function () {
 
 document.getElementById('import-games-btn').addEventListener('click', async function () {
     if (!cmsConnected) {
-        alert('Start the CMS server first:\n\npython3 server.py');
+        alert('CMS is not connected. Please refresh the page.');
         return;
     }
-    if (!confirm('Import all games from HTML files into the database? This will add any missing games from the games/ directory.')) {
+    if (!confirm('Reload games from data/games.json? This will refresh the admin panel with the latest data.')) {
         return;
     }
     try {
         const btn = this;
         btn.disabled = true;
-        btn.textContent = 'Importing...';
-        const res = await CMS.cmsFetch('/api/import-games', { method: 'POST' });
-        const result = await res.json();
-        if (result.success) {
-            alert(`Import complete!\n\nTotal games: ${result.imported}\nSynced files: ${result.synced}`);
-            await loadGames();
-        } else {
-            alert('Import failed: ' + (result.error || 'Unknown error'));
-        }
+        btn.textContent = 'Reloading...';
+        await loadGames();
+        alert('Games reloaded successfully!');
     } catch (err) {
-        alert('Import failed: ' + err.message);
+        alert('Reload failed: ' + err.message);
     } finally {
         const btn = document.getElementById('import-games-btn');
         btn.disabled = !cmsConnected;
-        btn.textContent = 'Import from HTML';
+        btn.textContent = 'Reload from Data';
     }
 });
 
 document.getElementById('game-form').addEventListener('submit', handleSave);
 
+// Add autosave triggers to all form inputs
+const formInputs = document.querySelectorAll('#game-form input:not([type="file"]):not([type="checkbox"]):not([type="hidden"]), #game-form textarea, #game-form select');
+formInputs.forEach(function(input) {
+    input.addEventListener('input', function() {
+        markUnsavedChanges();
+        triggerAutosave();
+    });
+});
+
+// Add autosave triggers to checkboxes
+const checkboxes = document.querySelectorAll('#game-form input[type="checkbox"]');
+checkboxes.forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+        markUnsavedChanges();
+        triggerAutosave();
+    });
+});
+
 document.getElementById('close-modal').addEventListener('click', function () {
     document.getElementById('game-modal').classList.remove('active');
+    // Cancel autosave if modal is closed
+    if (autosaveTimer) {
+        clearTimeout(autosaveTimer);
+        autosaveTimer = null;
+    }
+    setSyncStatus('');
 });
 document.getElementById('cancel-modal').addEventListener('click', function () {
     document.getElementById('game-modal').classList.remove('active');
+    // Cancel autosave if modal is closed
+    if (autosaveTimer) {
+        clearTimeout(autosaveTimer);
+        autosaveTimer = null;
+    }
+    setSyncStatus('');
 });
 
 document.getElementById('game-name').addEventListener('input', function (e) {
@@ -569,6 +871,8 @@ document.getElementById('game-name').addEventListener('input', function (e) {
         .replace(/\s+/g, '-')
         .replace(/-+/g, '-');
     document.getElementById('game-slug').value = slug;
+    markUnsavedChanges();
+    triggerAutosave();
 });
 
 document.getElementById('game-image').addEventListener('change', function (e) {
@@ -578,6 +882,8 @@ document.getElementById('game-image').addEventListener('change', function (e) {
     const preview = document.getElementById('image-preview');
     preview.src = URL.createObjectURL(file);
     preview.hidden = false;
+    markUnsavedChanges();
+    triggerAutosave();
 });
 
 document.getElementById('search-games').addEventListener('input', function (e) {
@@ -590,35 +896,101 @@ document.getElementById('search-games').addEventListener('input', function (e) {
 });
 
 async function initAdmin() {
+    console.log('=== initAdmin() CALLED ===');
+    
     // Check authentication first
     if (!checkAuth()) {
+        console.log('initAdmin: auth check failed');
         return;
     }
+    console.log('initAdmin: auth check passed');
 
     // Add logout handler
-    document.getElementById('logout-btn').addEventListener('click', function(e) {
-        e.preventDefault();
-        sessionStorage.removeItem('codeloot_admin_auth');
-        sessionStorage.removeItem('codeloot_auth_time');
-        window.location.href = 'login.html';
-    });
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            sessionStorage.removeItem('codeloot_admin_auth');
+            sessionStorage.removeItem('codeloot_auth_time');
+            stopPolling();
+            window.location.href = 'login.html';
+        });
+    }
 
     if (CMS.isFileProtocol()) {
+        console.log('initAdmin: file protocol detected, redirecting');
         window.location.href = CMS.defaultCmsUrl + '/admin/index.html';
         return;
     }
 
+    console.log('initAdmin: Connecting to CMS API...');
     const base = await CMS.connectCms();
+    console.log('initAdmin: CMS connection result:', base);
     updateCmsBanner(base);
 
     // Always try to load games, even if CMS is not connected
     try {
+        console.log('initAdmin: About to call loadGames()');
         await loadGames();
+        console.log('initAdmin: loadGames() completed');
     } catch (err) {
-        console.error('Could not load games:', err.message);
+        console.error('initAdmin: Could not load games:', err.message);
         updateCmsBanner(null);
         // Don't alert - let the fallback in loadGames handle it
     }
+
+    // Start polling for remote changes if CMS is connected
+    if (cmsConnected) {
+        startPolling();
+        setSyncStatus('Real-time sync active', 'success');
+    } else {
+        console.warn('initAdmin: CMS not connected, polling disabled');
+    }
+    
+    console.log('=== initAdmin() COMPLETED ===');
+    
+    // Expose debug function to window for manual testing
+    window.debugRenderTest = function() {
+        console.log('=== DEBUG RENDER TEST ===');
+        console.log('gamesData:', gamesData);
+        console.log('gamesData?.games:', gamesData?.games);
+        console.log('Array.isArray(gamesData?.games):', Array.isArray(gamesData?.games));
+        console.log('gamesData?.games?.length:', gamesData?.games?.length);
+        
+        if (typeof renderGamesTable === 'function') {
+            console.log('renderGamesTable function exists');
+            renderGamesTable(gamesData?.games || []);
+        } else {
+            console.error('renderGamesTable function NOT FOUND');
+        }
+    };
+    
+    // Expose debug test with static data
+    window.debugRenderStatic = function() {
+        console.log('=== DEBUG STATIC RENDER TEST ===');
+        const testData = [
+            {
+                id: "debug",
+                name: "DEBUG GAME",
+                slug: "debug-game",
+                category: "Action",
+                codes: [{id: 1, code: "TEST123", reward: "Test Reward", status: "active"}],
+                active: true,
+                featured: true
+            }
+        ];
+        console.log('Rendering with static test data:', testData);
+        if (typeof renderGamesTable === 'function') {
+            renderGamesTable(testData);
+        } else {
+            console.error('renderGamesTable function NOT FOUND');
+        }
+    };
+    
+    console.log('Debug functions exposed: window.debugRenderTest(), window.debugRenderStatic()');
+    
+    console.log('initAdmin completed, gamesData:', gamesData);
+    console.log('gamesData.games:', gamesData ? gamesData.games : 'N/A');
 }
 
 initAdmin();

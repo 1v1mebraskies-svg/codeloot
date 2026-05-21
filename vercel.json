@@ -5,16 +5,12 @@
       "destination": "/api/:path*"
     },
     {
-      "source": "/admin",
-      "destination": "/admin-index.html"
-    },
-    {
       "source": "/login",
       "destination": "/login.html"
     },
     {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/admin-index.html"
     }
   ]
 }

@@ -64,7 +64,7 @@ export default async function handler(req, res) {
     const ext = extensionForUpload(file.originalname, file.mimetype);
     const filename = slug + ext;
 
-    // Upload to GitHub repository
+    // Upload to GitHub (shared data source)
     const result = await uploadImage(slug, file.buffer, filename, file.mimetype);
 
     res.json({
@@ -72,7 +72,8 @@ export default async function handler(req, res) {
       image: filename,
       url: result.url,
       path: result.path,
-      files: [result.url],
+      files: [result.path],
+      message: 'Uploaded to GitHub - Live site updated instantly'
     });
   } catch (error) {
     console.error('Image upload error:', error);

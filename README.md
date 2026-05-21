@@ -1,179 +1,90 @@
-# CodeLoot
+# CodeLoot Admin Dashboard
 
-A static Roblox codes website with a headless CMS, deployed on Vercel with GitHub as the database.
+Production-ready admin dashboard for managing CodeLoot games data.
 
-## Quick Start
+## Deployment
 
-### Local Development
+This admin panel is designed to be deployed as a separate Vercel project at `admin.codeloot.codes`.
 
-```bash
-# Start Python dev server (optional - for local CMS testing)
-python3 server.py
+### Setup Instructions
+
+1. **Create a new Vercel project**
+   - Connect your GitHub repository
+   - Set root directory to `CLEANADMIN`
+   - Framework preset: "Other"
+
+2. **Environment Variables**
+   - Add `GITHUB_TOKEN` environment variable
+   - Get token from: https://github.com/settings/tokens
+   - Required scope: `repo` (full control of private repositories)
+
+3. **Deploy**
+   - Vercel will automatically deploy
+   - The admin will be available at your Vercel domain
+
+## Features
+
+- **Multi-source data loading**: CMS API → localStorage → remote JSON → local file
+- **Automatic localStorage backup**: All changes saved to localStorage for offline editing
+- **Cross-device sync**: Changes sync via GitHub API to update the main site
+- **Mobile responsive**: Works on all screen sizes
+- **Error handling**: Clear error messages and save status indicators
+- **Multi-user safe**: Session-based authentication with 8-hour expiry
+
+## File Structure
+
+```
+CLEANADMIN/
+├── admin-index.html    # Main admin dashboard
+├── admin.js            # Admin logic with localStorage fallback
+├── admin-style.css     # Admin styling
+├── login.html          # Login page
+├── codeloot-data.js    # Shared data utilities
+├── cms-api.js          # CMS API client
+├── vercel.json         # Vercel routing configuration
+├── package.json        # Dependencies
+├── .env.example        # Environment variables template
+├── api/                # Vercel API routes
+│   ├── games.js        # Games CRUD operations
+│   ├── upload-image.js # Image upload handler
+│   └── cms-health.js   # Health check endpoint
+├── lib/
+│   └── github-api.js   # GitHub API utilities
+└── data/
+    └── games.json      # Fallback data source
 ```
 
-Then open:
-- Public site: http://localhost:3000
-- Admin panel: http://localhost:3000/admin-index.html
+## Authentication
 
-### Deployment
+- Default password: `AdminPass` (change in `admin.js` and `login.html`)
+- Session expires after 8 hours
+- Sensitive actions (edit/delete) require additional password: `jeff@`
 
-```bash
-# Deploy to Vercel
-vercel deploy
-```
+## API Routes
 
-## Architecture
+- `GET /api/games` - Load games data
+- `PUT /api/games` - Save games data
+- `POST /api/upload-image` - Upload game images
+- `GET /api/cms-health` - Health check
 
-- **Frontend**: Static HTML/CSS/JS
-- **Admin Panel**: Browser-based CMS
-- **Database**: GitHub repository (data/games.json)
-- **Deployment**: Vercel (auto-deploys on Git push)
-- **API**: Vercel serverless functions
+## Data Sync Flow
 
-## Project Structure
+1. Admin loads data from multiple sources (CMS API, localStorage, remote JSON)
+2. Changes are saved to localStorage immediately
+3. If CMS is connected, changes are pushed to GitHub
+4. GitHub Pages automatically deploys changes to main site
+5. Cross-device users see updates after GitHub Pages deployment
 
-```
-CODELOOT/
-├── Public Website
-│   ├── index.html              # Homepage
-│   ├── style.css               # Styles
-│   ├── app.js                  # Frontend logic
-│   ├── games/                  # Game pages (19 files)
-│   └── assets/img/             # Game images
-│
-├── Admin Panel
-│   ├── admin-index.html        # Admin dashboard
-│   ├── admin-style.css         # Admin styles
-│   ├── admin.js                # Admin logic
-│   ├── cms-api.js              # CMS API client
-│   ├── codeloot-data.js        # Data utilities
-│   └── login.html              # Admin login
-│
-├── API Routes (Vercel)
-│   └── api/
-│       ├── games.js            # Games CRUD
-│       ├── upload-image.js     # Image upload
-│       ├── sync-pages.js       # Page sync
-│       └── cms-health.js       # Health check
-│
-├── Data Layer
-│   ├── data/games.json         # Game data
-│   └── lib/github-api.js      # GitHub API client
-│
-└── Scripts (Local Dev)
-    └── scripts/
-        ├── site_generator.py   # Generate HTML from JSON
-        ├── html_importer.py    # Import HTML to JSON
-        └── image_utils.py     # Image utilities
-```
+## Local Development
 
-## Admin Panel
-
-### Access
-- **URL**: `/admin` or `/admin-index.html`
-- **Login Password**: `AdminPass`
-- **Session**: 8 hours
-- **Sensitive Actions**: Requires additional password (`jeff@`)
-
-### Features
-- Add/edit/delete games
-- Manage codes with bulk import
-- Upload game images
-- Auto-publish to GitHub
-- Search and filter games
-
-## GitHub API Setup
-
-### Required Environment Variable
-```bash
-GITHUB_TOKEN=your_github_personal_access_token
-```
-
-### Create GitHub Token
-1. Go to https://github.com/settings/tokens
-2. Generate new token (classic)
-3. Select scopes: `repo` (full control)
-4. Add to Vercel environment variables
-
-### How It Works
-1. Admin saves changes via CMS
-2. API route commits to GitHub
-3. GitHub triggers Vercel deploy
-4. Site updates automatically
-
-## Vercel Configuration
-
-### Environment Variables
-- `GITHUB_TOKEN`: GitHub personal access token
-
-### Routing
-- `/api/*` → API routes
-- `/admin` → Admin panel
-- `/login` → Login page
-- `/*` → Public site (index.html)
-
-## Data Flow
-
-### Public Site
-```
-User → index.html → app.js → data/games.json → Render game cards
-```
-
-### Admin Panel
-```
-Admin → admin-index.html → admin.js → API route → GitHub API → data/games.json → Vercel deploy
-```
-
-## Scripts
-
-### Local Development
-```bash
-# Generate HTML from games.json
-python3 scripts/site_generator.py
-
-# Import games from HTML files
-python3 scripts/html_importer.py
-
-# Start dev server
-python3 server.py
-```
-
-### Auto-Sync (Optional)
-```bash
-# Watch files and auto-commit to GitHub
-node scripts/auto-sync.js
-```
-
-## Security Notes
-
-**Current Authentication:**
-- Passwords hardcoded in admin.js (NOT production-ready)
-- Session-based auth (browser storage only)
-- No server-side validation
-
-**Recommendations for Production:**
-- Implement proper authentication (NextAuth.js)
-- Use environment variables for passwords
-- Add rate limiting
-- Implement CSRF protection
+1. Copy `.env.example` to `.env` and add your GitHub token
+2. Run `vercel dev` to test locally
+3. Or deploy directly to Vercel
 
 ## Troubleshooting
 
-### Admin Panel Not Loading
-- Check GITHUB_TOKEN is set in Vercel
-- Verify GitHub token has `repo` scope
-- Check API health: `/api/cms-health`
+**White screen issue**: Check browser console for errors. Ensure all files are present and paths are correct.
 
-### Images Not Uploading
-- Verify GITHUB_TOKEN permissions
-- Check file size limit (15MB)
-- Verify image format (PNG/JPG/WebP/GIF)
+**CMS offline**: Admin will show "CMS offline" banner and save to localStorage only. Changes will sync when CMS reconnects.
 
-### Deployment Issues
-- Check vercel.json routing
-- Verify all required files are committed
-- Check Vercel deployment logs
-
-## License
-
-Private project - All rights reserved
+**Authentication errors**: Check sessionStorage and ensure password is correct.
