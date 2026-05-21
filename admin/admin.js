@@ -57,11 +57,12 @@ function updateCmsBanner(base) {
         el.style.border = '1px solid rgba(46, 160, 67, 0.4)';
         el.style.color = 'var(--text)';
         el.innerHTML =
-            '<strong>CMS connected</strong> — Save &amp; Publish writes real files to your project:<br>' +
-            '<code>data/games.json</code>, <code>index.html</code>, <code>games/*.html</code><br>' +
-            '<span style="color:var(--muted)">Images uploaded to Vercel Blob Storage · ' +
+            '<strong>GitHub API connected</strong> — Save &amp; Publish commits directly to GitHub:<br>' +
+            '<code>data/games.json</code>, <code>assets/img/*</code><br>' +
+            '<span style="color:var(--muted)">Images uploaded to GitHub repository · ' +
             'Server: ' + base + ' · ' +
-            '<a href="' + base + '/index.html" target="_blank" rel="noopener">View site</a></span>';
+            'GitHub Pages auto-deploys · ' +
+            '<a href="https://codeloot.codes" target="_blank" rel="noopener">View live site</a></span>';
         document.getElementById('save-game-btn').disabled = false;
         document.getElementById('add-game-btn').disabled = false;
     } else {
@@ -70,10 +71,10 @@ function updateCmsBanner(base) {
         el.style.border = '1px solid rgba(255, 193, 7, 0.4)';
         el.style.color = 'var(--text)';
         el.innerHTML =
-            '<strong>CMS offline — Read-only mode</strong> — Games loaded from <code>data/games.json</code>.<br>' +
-            'To save changes, run <code>python3 server.py</code> then refresh.<br>' +
-            '<span style="color:var(--muted)">Current data source: local file · ' +
-            '<a href="' + CMS.defaultCmsUrl + '/admin/index.html" target="_blank" rel="noopener">Connect to CMS</a></span>';
+            '<strong>GitHub API offline — Read-only mode</strong> — Games loaded from GitHub.<br>' +
+            'To save changes, ensure GITHUB_TOKEN is configured in Vercel.<br>' +
+            '<span style="color:var(--muted)">Current data source: GitHub repository · ' +
+            '<a href="' + CMS.defaultCmsUrl + '/admin/index.html" target="_blank" rel="noopener">Connect to API</a></span>';
         document.getElementById('save-game-btn').disabled = true;
         document.getElementById('add-game-btn').disabled = true;
     }
@@ -398,7 +399,7 @@ function readFormGame() {
 async function handleSave(e) {
     e.preventDefault();
     if (!cmsConnected) {
-        alert('Start the CMS server first:\n\npython3 server.py\n\nThen open:\nhttp://127.0.0.1:3000/admin/index.html');
+        alert('GitHub API not connected.\n\nEnsure GITHUB_TOKEN is configured in Vercel environment variables.\n\nThen refresh this page.');
         return;
     }
 
@@ -533,31 +534,10 @@ document.getElementById('add-game-btn').addEventListener('click', function () {
 
 document.getElementById('import-games-btn').addEventListener('click', async function () {
     if (!cmsConnected) {
-        alert('Start the CMS server first:\n\npython3 server.py');
+        alert('GitHub API not connected.\n\nEnsure GITHUB_TOKEN is configured in Vercel environment variables.');
         return;
     }
-    if (!confirm('Import all games from HTML files into the database? This will add any missing games from the games/ directory.')) {
-        return;
-    }
-    try {
-        const btn = this;
-        btn.disabled = true;
-        btn.textContent = 'Importing...';
-        const res = await CMS.cmsFetch('/api/import-games', { method: 'POST' });
-        const result = await res.json();
-        if (result.success) {
-            alert(`Import complete!\n\nTotal games: ${result.imported}\nSynced files: ${result.synced}`);
-            await loadGames();
-        } else {
-            alert('Import failed: ' + (result.error || 'Unknown error'));
-        }
-    } catch (err) {
-        alert('Import failed: ' + err.message);
-    } finally {
-        const btn = document.getElementById('import-games-btn');
-        btn.disabled = !cmsConnected;
-        btn.textContent = 'Import from HTML';
-    }
+    alert('Import from HTML is not available with GitHub API.\n\nGames are managed directly through the GitHub repository.\nUse the Edit/Add buttons to manage games.');
 });
 
 document.getElementById('game-form').addEventListener('submit', handleSave);
