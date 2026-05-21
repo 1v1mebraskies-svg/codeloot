@@ -99,104 +99,44 @@ function updateCmsBanner(base) {
 }
 
 async function loadGames() {
-    let loadedFromCms = false;
+    console.log('loadGames() called - loading from /data/games.json');
     
-    console.log('loadGames() called, cmsConnected:', cmsConnected);
-    
-    // Primary: Try to load from CMS API (GitHub API - shared data source)
     try {
-        const base = CMS.getApiBase();
-        console.log('CMS API base:', base);
-        if (base) {
-            console.log('Attempting to load from CMS API at:', base + '/api/games');
-            const res = await CMS.cmsFetch('/api/games', { cache: 'no-store' });
-            console.log('CMS API response status:', res.status, 'ok:', res.ok);
-            if (res.ok) {
-                gamesData = await res.json();
-                console.log('Raw API response:', JSON.stringify(gamesData, null, 2).substring(0, 500));
-                console.log('gamesData.games exists?', !!gamesData.games, 'type:', typeof gamesData.games);
-                console.log('gamesData.games is array?', Array.isArray(gamesData.games));
-                console.log('gamesData.games length:', gamesData.games ? gamesData.games.length : 'N/A');
-                // Track version for conflict detection
-                currentVersion = gamesData._version || null;
-                // Remove internal fields
-                delete gamesData._version;
-                delete gamesData._timestamp;
-                loadedFromCms = true;
-                console.log('✓ Loaded games from GitHub API (shared data source), count:', gamesData.games ? gamesData.games.length : 0, 'version:', currentVersion);
-            } else {
-                console.warn('CMS API returned non-OK status:', res.status, 'trying fallback...');
-                const errorText = await res.text().catch(() => '');
-                console.warn('Error response body:', errorText);
-            }
+        const response = await fetch('/data/games.json?v=livefix', { cache: 'no-store' });
+        console.log('Direct fetch status:', response.status);
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log('LIVE GAMES:', data);
+            console.log('Games count:', data.games ? data.games.length : 0);
+            
+            gamesData = data;
+            currentVersion = null;
+            
+            // Ensure all games have required fields
+            gamesData.games.forEach(function(game) {
+                if (!game.codes) game.codes = [];
+                if (!game.short_description && game.description) game.short_description = game.description;
+                if (!game.long_description) game.long_description = game.description || game.short_description || '';
+                if (!game.redeem_instructions) game.redeem_instructions = [];
+                // Ensure all codes have IDs
+                game.codes.forEach(function(code, idx) {
+                    if (!code.id) code.id = idx + 1;
+                });
+            });
+            
+            console.log('Total games loaded after normalization:', gamesData.games.length);
+            renderGamesTable(gamesData.games);
         } else {
-            console.warn('CMS API base not available, trying fallback...');
+            console.error('Failed to load games.json, status:', response.status);
+            gamesData = { games: [], metadata: { version: '1.0', last_updated: '' } };
+            renderGamesTable([]);
         }
     } catch (e) {
-        console.warn('CMS fetch failed, falling back:', e.message);
-        console.error('Full error:', e);
-    }
-    
-    // Fallback 1: Try to load from data/games.json directly (bypass CMS API)
-    if (!loadedFromCms) {
-        try {
-            console.log('Attempting to load from data/games.json directly...');
-            const res = await fetch('/data/games.json', { cache: 'no-store' });
-            if (res.ok) {
-                gamesData = await res.json();
-                currentVersion = null;
-                console.log('✓ Loaded games from data/games.json (direct), count:', gamesData.games ? gamesData.games.length : 0);
-                loadedFromCms = true;
-                setSyncStatus('Loaded from data file - CMS API unavailable', 'warning');
-            } else {
-                console.warn('data/games.json fetch failed with status:', res.status);
-            }
-        } catch (e) {
-            console.warn('data/games.json fetch failed:', e.message);
-        }
-    }
-    
-    // Fallback 2: Try to load from localStorage (backup)
-    if (!loadedFromCms) {
-        try {
-            const localData = localStorage.getItem('codeloot_games_data');
-            if (localData) {
-                gamesData = JSON.parse(localData);
-                currentVersion = null;
-                console.log('⚠ Loaded games from localStorage (backup), count:', gamesData.games ? gamesData.games.length : 0);
-                loadedFromCms = true;
-                setSyncStatus('Using local backup - CMS connection issue', 'warning');
-            }
-        } catch (e) {
-            console.warn('localStorage load failed:', e.message);
-        }
-    }
-    
-    // Final fallback: Empty data structure
-    if (!loadedFromCms) {
-        console.error('❌ All load attempts failed, using empty data structure');
+        console.error('Error loading games.json:', e);
         gamesData = { games: [], metadata: { version: '1.0', last_updated: '' } };
-        currentVersion = null;
-        setSyncStatus('Failed to load games - check CMS connection', 'error');
+        renderGamesTable([]);
     }
-    
-    if (!gamesData.metadata) {
-        gamesData.metadata = { version: '1.0', last_updated: '' };
-    }
-    // Ensure all games have required fields
-    gamesData.games.forEach(function(game) {
-        if (!game.codes) game.codes = [];
-        if (!game.short_description && game.description) game.short_description = game.description;
-        if (!game.long_description) game.long_description = game.description || game.short_description || '';
-        if (!game.redeem_instructions) game.redeem_instructions = [];
-        // Ensure all codes have IDs
-        game.codes.forEach(function(code, idx) {
-            if (!code.id) code.id = idx + 1;
-        });
-    });
-    console.log('Total games loaded after normalization:', gamesData.games.length);
-    console.log('Calling renderGamesTable with', gamesData.games.length, 'games');
-    renderGamesTable(gamesData.games);
 }
 
 function setSaveStatus(msg, isError) {
@@ -938,46 +878,6 @@ async function initAdmin() {
         updateCmsBanner(null);
         // Don't alert - let the fallback in loadGames handle it
     }
-    
-    // HARDCODED RENDER TEST - verify renderer works
-    console.log('=== HARDCODED RENDER TEST ===');
-    const testData = [
-        {
-            id: "test",
-            name: "TEST GAME",
-            slug: "test",
-            category: "Action",
-            codes: [{id: 1, code: "TEST", reward: "Test", status: "active"}],
-            active: true,
-            featured: true
-        }
-    ];
-    console.log('Rendering hardcoded test data:', testData);
-    renderGamesTable(testData);
-    
-    // DIRECT FETCH FROM /data/games.json
-    console.log('=== DIRECT FETCH TEST ===');
-    try {
-        const directResponse = await fetch('/data/games.json', { cache: 'no-store' });
-        console.log('Direct fetch status:', directResponse.status);
-        if (directResponse.ok) {
-            const directData = await directResponse.json();
-            console.log('Direct fetch data:', directData);
-            console.log('Direct fetch games:', directData.games);
-            console.log('Direct fetch games length:', directData.games ? directData.games.length : 0);
-            
-            // Render the direct data
-            if (directData.games && directData.games.length > 0) {
-                console.log('Rendering direct fetch data with', directData.games.length, 'games');
-                gamesData = directData;
-                renderGamesTable(directData.games);
-            }
-        } else {
-            console.error('Direct fetch failed with status:', directResponse.status);
-        }
-    } catch (e) {
-        console.error('Direct fetch error:', e);
-    }
 
     // Start polling for remote changes if CMS is connected
     if (cmsConnected) {
@@ -988,49 +888,6 @@ async function initAdmin() {
     }
     
     console.log('=== initAdmin() COMPLETED ===');
-    
-    // Expose debug function to window for manual testing
-    window.debugRenderTest = function() {
-        console.log('=== DEBUG RENDER TEST ===');
-        console.log('gamesData:', gamesData);
-        console.log('gamesData?.games:', gamesData?.games);
-        console.log('Array.isArray(gamesData?.games):', Array.isArray(gamesData?.games));
-        console.log('gamesData?.games?.length:', gamesData?.games?.length);
-        
-        if (typeof renderGamesTable === 'function') {
-            console.log('renderGamesTable function exists');
-            renderGamesTable(gamesData?.games || []);
-        } else {
-            console.error('renderGamesTable function NOT FOUND');
-        }
-    };
-    
-    // Expose debug test with static data
-    window.debugRenderStatic = function() {
-        console.log('=== DEBUG STATIC RENDER TEST ===');
-        const testData = [
-            {
-                id: "debug",
-                name: "DEBUG GAME",
-                slug: "debug-game",
-                category: "Action",
-                codes: [{id: 1, code: "TEST123", reward: "Test Reward", status: "active"}],
-                active: true,
-                featured: true
-            }
-        ];
-        console.log('Rendering with static test data:', testData);
-        if (typeof renderGamesTable === 'function') {
-            renderGamesTable(testData);
-        } else {
-            console.error('renderGamesTable function NOT FOUND');
-        }
-    };
-    
-    console.log('Debug functions exposed: window.debugRenderTest(), window.debugRenderStatic()');
-    
-    console.log('initAdmin completed, gamesData:', gamesData);
-    console.log('gamesData.games:', gamesData ? gamesData.games : 'N/A');
 }
 
 initAdmin();
