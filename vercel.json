@@ -5,12 +5,32 @@
       "destination": "/api/:path*"
     },
     {
-      "source": "/login",
-      "destination": "/login.html"
+      "source": "/data/:path*",
+      "destination": "/data/:path*"
     },
     {
-      "source": "/(.*)",
-      "destination": "/admin-index.html"
+      "source": "/assets/:path*",
+      "destination": "/assets/:path*"
+    },
+    {
+      "source": "/games/:path*",
+      "destination": "/games/:path*"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin/admin-index.html"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "/admin/:path*"
+    },
+    {
+      "source": "/login",
+      "destination": "/admin/login.html"
+    },
+    {
+      "source": "/((?!data|assets|games|api|admin|login).*)",
+      "destination": "/index.html"
     }
   ]
 }
