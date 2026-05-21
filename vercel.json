@@ -2,14 +2,10 @@
   "rewrites": [
     {
       "source": "/",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/admin",
       "destination": "/admin-index.html"
     },
     {
-      "source": "/admin/login",
+      "source": "/login",
       "destination": "/login.html"
     },
     {
@@ -17,28 +13,8 @@
       "destination": "/api/:path*"
     },
     {
-      "source": "/about",
-      "destination": "/about.html"
-    },
-    {
-      "source": "/contact",
-      "destination": "/contact.html"
-    },
-    {
-      "source": "/privacy-policy",
-      "destination": "/privacy-policy.html"
-    },
-    {
-      "source": "/terms-of-service",
-      "destination": "/terms-of-service.html"
-    },
-    {
-      "source": "/games/:path*",
-      "destination": "/games/:path*"
-    },
-    {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/admin-index.html"
     }
   ]
 }
